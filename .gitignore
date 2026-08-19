@@ -19,6 +19,7 @@ target/
 node_modules/
 
 # Runtime data must stay outside the repository and Syncthing workspace.
+.envisle/
 .osdeck/
 data/
 state/

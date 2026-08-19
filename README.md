@@ -1,33 +1,31 @@
-# OSDeck
+# Envisle
 
-> Working codename for a capability-aware local environment platform.
+> Independent environments. Controlled bridges.
 
-OSDeck 的目标是让用户用统一的 `Environment` 概念理解和控制本机隔离环境，同时保留 Container、VM、Emulator 及不同宿主平台的真实能力差异。
+Envisle 安装后直接创建并拥有独立 `Environment`。每个实例默认以受管 VM 作为隔离边界；环境之间、宿主与环境之间默认不共享数据，只能通过 Envisle 创建、展示、撤销并审计的授权桥梁交换数据。
 
-项目当前处于**证据驱动的初始化阶段**。`OSDeck` 只是工作代号；公开品牌与首个产品形态尚未冻结。
+项目当前处于 **macOS Runtime 探针准备阶段**。公开名称与首个产品模型已经冻结，实现语言和语言级接口尚未冻结。
 
 ## 当前共识
 
+- 产品模型为 `Managed Runtime Platform`，不是已有 Runtime 的聚合控制面。
 - 用户模型统一为 `Environment`，实现模型按 `Provider` 隔离。
+- 一实例一受管 VM 是默认安全边界；Container 只能作为 VM 内工作负载优化。
+- 默认无宿主目录共享、无环境间通信、无宿主入站端口。
 - Runtime Router 必须基于宿主、来宾、架构、许可和能力探测做选择，不能只看操作系统名称。
 - 不把容器、完整 VM 和设备模拟器伪装成完全相同的资源。
-- 首个验证宿主优先 Apple silicon + macOS 26；这是一项候选基线，需经过探针后才能冻结。
+- 首个验证宿主为 Apple silicon + macOS 26，首个 guest 为项目提供的 ARM64 Linux 最小镜像；正式支持仍需探针验收。
 - Android AVF/pKVM 不是普通第三方 APK 可依赖的产品后端。
 - 跨 ISA QEMU/TCG 只可作为兼容路径，不能承诺主路径交互性能。
 
-## 当前待决策
+## MVP 冻结基线
 
-首个 MVP 有两条候选路径：
-
-1. `Runtime Platform`：OSDeck 自己提供并编排 Virtualization.framework、Apple `container`、QEMU 等运行后端。
-2. `Local Control Plane`：OSDeck 先发现并统一控制用户已安装的 UTM、Docker-compatible engine、Lima/Colima 等运行时。
-
-初始化骨架只固化两条路径共享的 Provider/Capability 边界。对比与验收门见 [`docs/architecture/product-options.md`](docs/architecture/product-options.md)。
+威胁模型、存储/共享/网络默认策略、明确排除项和六条端到端验收标准见 [`docs/architecture/mvp-baseline.md`](docs/architecture/mvp-baseline.md)。产品路径的候选比较及关闭结论见 [`docs/architecture/product-options.md`](docs/architecture/product-options.md)。
 
 ## 项目状态
 
 - 已完成初始化：[讨论成果驱动的项目初始化](docs/archive/done-log.md#t-001)
-- 下一决策：[首个 MVP 产品路径与公开名称决策](docs/TODO.md#t-004)
+- 当前执行：[首个 MVP 产品路径与公开名称决策](docs/TODO.md#t-004)
 - 当前真相：[`docs/agent-context/current.md`](docs/agent-context/current.md)
 - 讨论来源：[`docs/research/discussion-source.md`](docs/research/discussion-source.md)
 - 广度调研：[`docs/research/breadth-scan.md`](docs/research/breadth-scan.md)

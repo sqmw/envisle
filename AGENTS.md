@@ -1,16 +1,16 @@
-# OSDeck 项目级 Agent 入口
+# Envisle 项目级 Agent 入口
 
 ## 适用范围
 
-1. 本文件只记录 OSDeck 项目长期有效的边界和首读入口；全局规则仍以 `$CODEX_HOME/AGENTS.md` 与其路由文档为准。
-2. 项目名称 `OSDeck` 当前是工作代号；公开品牌待决策，改名必须同步索引并记录 Decision。
+1. 本文件只记录 Envisle 项目长期有效的边界和首读入口；全局规则仍以 `$CODEX_HOME/AGENTS.md` 与其路由文档为准。
+2. 标准产品名为 `Envisle`，GitHub repository slug 为 `envisle`；历史旧称只在来源与迁移记录中保留。
 
 ## 项目事实
 
-1. 当前阶段：证据驱动的项目初始化与 Runtime 探针准备。
+1. 当前阶段：Managed Runtime Platform 的 macOS Runtime 探针准备。
 2. 当前技术状态：尚未冻结 UI、Core 或 Provider 的实现语言；讨论中的 Flutter、Rust、Swift 是候选，不是已批准基线。
-3. 当前首发候选宿主：Apple silicon + macOS 26；必须由 capability probe 验证后再冻结。
-4. 冻结基线：无。
+3. 当前首发候选宿主：Apple silicon + macOS 26，首个 guest 为 ARM64 Linux；必须由 capability probe 验证后再升级为正式支持。
+4. 冻结基线：`docs/architecture/mvp-baseline.md` 与 `D-002`；任何改变默认 VM 隔离、默认关闭共享/入站网络或产品受管生命周期的方案都需用户明确解冻。
 5. 主 TODO：`docs/TODO.md`；主 STEPS：`docs/STEPS.md`；主 DECISIONS：`docs/DECISIONS.md`。
 6. 运行数据边界：VM 磁盘、镜像、缓存、日志、数据库、快照、凭据与下载包一律置于仓库和同步目录之外。
 
@@ -28,7 +28,7 @@
 2. Container、VM、Emulator 保持独立 Provider 类型；不得为统一 UI 而伪造统一镜像、快照、网络或设备语义。
 3. 不允许把硬件加速失败静默降级为 TCG；实际 accelerator 必须可观察。
 4. 平台 API、外部 CLI 和第三方集成都在独立 adapter 内；核心领域不直接依赖其命令格式或 SDK 类型。
-5. 未经探针与用户决策，不冻结 Runtime Platform / Local Control Plane 产品路径，也不创建绑定某条路径的大规模代码骨架。
+5. 产品路径已冻结为 Managed Runtime Platform；不得退化为只管理用户现有 Runtime 的 Local Control Plane，也不得在无用户显式解冻时弱化默认 VM 隔离与项目受控共享。
 
 ## 常用命令
 

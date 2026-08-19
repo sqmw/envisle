@@ -16,9 +16,12 @@ required_files=(
   docs/agent-context/current.md
   docs/architecture/overview.md
   docs/architecture/code-map.md
+  docs/architecture/mvp-baseline.md
   docs/architecture/product-options.md
   docs/research/discussion-source.md
   docs/research/breadth-scan.md
+  docs/research/name-selection.md
+  docs/archive/decisions-superseded.md
 )
 
 for path in "${required_files[@]}"; do
@@ -28,7 +31,7 @@ for path in "${required_files[@]}"; do
   fi
 done
 
-runtime_dirs=(data state cache logs images downloads snapshots .osdeck)
+runtime_dirs=(data state cache logs images downloads snapshots .envisle .osdeck)
 for path in "${runtime_dirs[@]}"; do
   if [[ -e "$path" ]]; then
     printf 'runtime data directory found inside repository: %s\n' "$path" >&2

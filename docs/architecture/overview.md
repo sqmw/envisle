@@ -37,7 +37,7 @@ Container    VM         Emulator / Device
 
 ## 证据边界
 
-本文件是初始化架构护栏，不是冻结接口。产品路径、实现语言、Provider 清单与 public API 必须由后续任务结合探针结果确定。
+产品路径已冻结为 [`Managed Runtime Platform`](mvp-baseline.md)；实现语言、Provider 语言级接口与 public API 仍须由后续任务结合探针结果确定。
 
 ## 验证思路
 
