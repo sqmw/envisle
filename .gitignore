@@ -1,0 +1,43 @@
+# Local editor and OS files
+.DS_Store
+.idea/
+.vscode/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Build output and package caches
+build/
+dist/
+target/
+.dart_tool/
+.fvm/
+node_modules/
+
+# Runtime data must stay outside the repository and Syncthing workspace.
+.osdeck/
+data/
+state/
+cache/
+logs/
+images/
+downloads/
+snapshots/
+*.img
+*.qcow2
+*.raw
+*.iso
+*.ipsw
+*.vhd
+*.vhdx
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# External source evidence belongs in temporary/cache locations.
+code-base/
