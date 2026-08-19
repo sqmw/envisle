@@ -17,7 +17,7 @@ Envisle 安装后创建并拥有独立 Environment，以受管 VM 为默认安�
 <a id="m-02"></a>
 ### M-02 macOS Apple Silicon 探针闭环
 
-- 状态：`pending`
+- 状态：`in_progress`
 - 达成状态：用最小探针验证 Apple silicon + macOS 26 上 ARM64 Linux 受管 VM 的 Runtime Provider 可行性，并形成可冻结的 Provider 契约。
 - 验收标准：宿主能力探测、ARM64 Linux guest 生命周期、默认隔离、显式共享/端口和失败证据均可复现；Provider、Broker 与实现语言边界由实测支持。
 - 归属 Task：`T-002`、`T-003`（按顺序推进：先以 `T-002` 取得探针证据，再由 `T-003` 定义契约基线）。
@@ -30,14 +30,14 @@ Envisle 安装后创建并拥有独立 Environment，以受管 VM 为默认安�
 - 标准任务名称：`macOS Runtime Provider 探针`
 - 任务定义版本：`v2`
 - 旧版本摘要：`v1` 原计划同时验证 macOS/Linux/Android 候选 Runtime；已由 `D-002` 收窄为首个可证伪闭环。
-- 状态：`pending`
+- 状态：`in_progress`
 - 优先级：`P0`
 - 主归属 Milestone：`M-02`
 - 必要依赖：`T-001`。
 - 是什么：验证 Apple silicon + macOS 26 上由项目创建并管理 ARM64 Linux VM 的最小能力、默认隔离和宿主约束。
 - 边界：只做宿主能力、生命周期、独立磁盘、NAT、显式共享/端口的隔离探针与证据；不进入产品化 UI，不验证 macOS/Windows/Android guest，不冻结跨平台实现。
 - 做完算什么：host probe 与 create/start/stop/delete 可复现；guest 就绪、独立磁盘、默认网络隔离及最小共享/端口策略有成功或明确失败证据，并形成 Go/No-Go 结论。
-- 当前步骤：待开始（不预建步骤块）。
+- 当前步骤：[STEPS / T-002 v2](STEPS.md#steps-t-002-v2)
 
 <a id="t-003"></a>
 ### T-003 Environment 领域模型与 Provider 契约基线
