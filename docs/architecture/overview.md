@@ -37,7 +37,7 @@ Container    VM         Emulator / Device
 
 ## 证据边界
 
-产品路径已冻结为 [`Managed Runtime Platform`](mvp-baseline.md)；实现语言、Provider 语言级接口与 public API 仍须由后续任务结合探针结果确定。
+产品路径已冻结为 [`Managed Runtime Platform`](mvp-baseline.md)；[`T-002 实测`](../research/macos-runtime-probe.md)支持 Apple ARM64 Linux VM Provider 条件性 Go，但证明 VZNAT 不能单独提供 host-to-guest 默认拒绝。实现语言、Provider 语言级接口与 public API 仍由 `T-003 v3` 冻结。
 
 ## 验证思路
 
@@ -48,3 +48,4 @@ Container    VM         Emulator / Device
 3. UI/API 只暴露 capability 允许的动作。
 4. 启停结果与 Provider 原始状态一致，失败保留原始错误码。
 5. QEMU 路径报告实际 accelerator；许可敏感路径报告 review gate。
+6. Network Broker 的 desired/applied policy 分离；guest policy agent 未证明默认拒绝时，不得把“未声明端口规则”显示为“宿主不可达”。

@@ -7,9 +7,9 @@
 
 ## 项目事实
 
-1. 当前阶段：Managed Runtime Platform 的 macOS Runtime 探针准备。
+1. 当前阶段：macOS Runtime Probe 已形成条件性 Go，等待 `T-003 v3` 冻结 Environment/Provider/Broker 契约。
 2. 当前技术状态：尚未冻结 UI、Core 或 Provider 的实现语言；讨论中的 Flutter、Rust、Swift 是候选，不是已批准基线。
-3. 当前首发候选宿主：Apple silicon + macOS 26，首个 guest 为 ARM64 Linux；必须由 capability probe 验证后再升级为正式支持。
+3. 当前首发目标宿主：Apple silicon + macOS 26，首个 guest 为 ARM64 Linux；`P-ENVI-001` 已在一台 Apple M2/macOS 26.5.1 上通过生命周期、独立磁盘和只读共享探针，但正式支持仍需契约与产品级验证。
 4. 冻结基线：`docs/architecture/mvp-baseline.md` 与 `D-002`；任何改变默认 VM 隔离、默认关闭共享/入站网络或产品受管生命周期的方案都需用户明确解冻。
 5. 主 TODO：`docs/TODO.md`；主 STEPS：`docs/STEPS.md`；主 DECISIONS：`docs/DECISIONS.md`。
 6. 运行数据边界：VM 磁盘、镜像、缓存、日志、数据库、快照、凭据与下载包一律置于仓库和同步目录之外。
@@ -29,6 +29,7 @@
 3. 不允许把硬件加速失败静默降级为 TCG；实际 accelerator 必须可观察。
 4. 平台 API、外部 CLI 和第三方集成都在独立 adapter 内；核心领域不直接依赖其命令格式或 SDK 类型。
 5. 产品路径已冻结为 Managed Runtime Platform；不得退化为只管理用户现有 Runtime 的 Local Control Plane，也不得在无用户显式解冻时弱化默认 VM 隔离与项目受控共享。
+6. VZNAT 不等于 host-to-guest 防火墙；Network Broker 必须通过 guest policy agent 证明 default deny、allow 与 revoke，未证明时 fail closed。
 
 ## 常用命令
 

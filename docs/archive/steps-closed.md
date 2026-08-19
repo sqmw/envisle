@@ -80,3 +80,38 @@
 
 - 关闭结果：`done`
 - 遗留风险：正式商标检索未做；Runtime 可行性、共享撤销语义和实现语言仍由 `T-002 v2`、`T-003 v2` 承接。
+
+<a id="steps-t-002-v2"></a>
+## T-002 v2 — macOS Runtime Provider 探针
+
+- 关闭记录：[Done Log / T-002](done-log.md#t-002)
+- 任务定义版本：`v2`
+- 块所有者：`/root`
+- 最后更新时间：`2026-08-19 Asia/Shanghai`
+- 写入模式：`single-writer`；Probe 源码位于 Parent 外部，Parent 产品代码保持未实现。
+- 执行授权：`implicit`；用户明确同意按建议推进 ARM64 Linux VM Probe、低负载本机验证、结果回流、提交和推送。
+- 目的意图：用默认可抛弃的 Probe 验证 Apple silicon + macOS 26 上受管 ARM64 Linux VM 的宿主能力、生命周期、独立磁盘、NAT、共享/端口与失败边界；运行数据置于同步目录外，实验实现不直接进入产品。
+
+### Step 1 — 建立 Probe 身份并核验宿主前置条件
+
+- 状态：`已完成`
+- 实测结果：创建 `P-ENVI-001`，Base Revision=`b835f18367daa4ce8cd5642516bd1945a9254705`。宿主为 Apple M2/arm64、macOS 26.5.1、Hypervisor 可用、SDK 26.5、Swift 6.3.2、24 GiB；运行数据使用仓库外 `ENVISLE_PROBE_STATE_DIR`，启动材料收敛为约 19 MiB 的 Alpine aarch64 netboot 输入。
+
+### Step 2 — 实现并验证 Host Capability Probe
+
+- 状态：`已完成`
+- 实测结果：Probe `0a23059` 输出版本化 JSON；本机 Provider=`apple_virtualization_framework`、accelerator=`apple_hypervisor`、支持状态为真。旧 macOS、非 arm64、Hypervisor/Virtualization 缺失、CPU/内存不足均独立拒绝且无 fallback；离线测试与 JSON 检查通过。
+
+### Step 3 — 实现并实测最小 ARM64 Linux VM 闭环
+
+- 状态：`已完成`
+- 实测结果：Probe `69ea09c` 真实完成 create/start/ready/poweroff/restart/delete、两块独立 RAW disk、默认无 share、显式只读 virtiofs 和并发双 VM 网络检查。guest-to-guest TCP 在观察组合中不可达，但宿主可在无声明端口规则时连接 guest，证明 VZNAT 不是 host-to-guest firewall。压缩 kernel 与旧 cpio 两个启动失败均保留原始证据并修正，未 fallback。
+
+### Step 4 — Review、回流结论并关闭 Probe
+
+- 状态：`已完成`
+- 实测结果：review 的空 share 参数、moving latest、日志旧尾、仓库内 state 风险均闭环；host 入站策略缺口转为 `D-005` 和 `T-003 v3` 硬约束。Probe `e0740b2` 进入 `closed/promote-findings`；仅回流证据和契约，未提升实验实现。Parent `make check`、链接、Git/远端一致性均通过。
+
+- 关闭结果：`done`；Provider=`conditional Go`，VZNAT-only 端口策略=`No-Go`。
+- 相关提交：Parent 本条所在提交；Probe `0a23059`、`69ea09c`、`e0740b2`。
+- 遗留风险：guest firewall 的 default deny/allow/revoke/attestation、write-share 撤销、产品 guest image、崩溃恢复、性能和分发签名由后续任务验证。

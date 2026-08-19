@@ -11,6 +11,7 @@
 
 - `讨论 / 来源 / share / chat2api` → [`research/discussion-source.md`](research/discussion-source.md)
 - `竞品 / Apple / Windows / Android / QEMU / 许可` → [`research/breadth-scan.md`](research/breadth-scan.md)
+- `macOS Runtime Probe / VM 启动 / VZNAT / virtiofs / conditional Go` → [`research/macos-runtime-probe.md`](research/macos-runtime-probe.md)
 - `名称 / Envisle / OSDeck / osdesk / rename` → [`research/name-selection.md`](research/name-selection.md)
 - `Environment / Provider / Runtime Router / capability` → [`architecture/overview.md`](architecture/overview.md)
 - `MVP / control plane / runtime platform / 产品路径` → [`architecture/product-options.md`](architecture/product-options.md)

@@ -4,7 +4,7 @@
 
 Envisle 安装后直接创建并拥有独立 `Environment`。每个实例默认以受管 VM 作为隔离边界；环境之间、宿主与环境之间默认不共享数据，只能通过 Envisle 创建、展示、撤销并审计的授权桥梁交换数据。
 
-项目当前处于 **macOS Runtime 探针准备阶段**。公开名称与首个产品模型已经冻结，实现语言和语言级接口尚未冻结。
+项目当前处于 **Environment / Provider / Broker 契约准备阶段**。公开名称与首个产品模型已经冻结，macOS ARM64 Linux VM Probe 已形成条件性 Go；实现语言和语言级接口尚未冻结。
 
 ## 当前共识
 
@@ -14,7 +14,8 @@ Envisle 安装后直接创建并拥有独立 `Environment`。每个实例默认�
 - 默认无宿主目录共享、无环境间通信、无宿主入站端口。
 - Runtime Router 必须基于宿主、来宾、架构、许可和能力探测做选择，不能只看操作系统名称。
 - 不把容器、完整 VM 和设备模拟器伪装成完全相同的资源。
-- 首个验证宿主为 Apple silicon + macOS 26，首个 guest 为项目提供的 ARM64 Linux 最小镜像；正式支持仍需探针验收。
+- 首个验证宿主为 Apple silicon + macOS 26，首个 guest 为项目提供的 ARM64 Linux 最小镜像；Apple M2/macOS 26.5.1 上的生命周期、独立磁盘和只读共享已实测通过。
+- VZNAT 不能单独提供宿主入站默认拒绝；端口策略必须由 Envisle 的 Network Broker 与 guest policy agent 执行并证明。
 - Android AVF/pKVM 不是普通第三方 APK 可依赖的产品后端。
 - 跨 ISA QEMU/TCG 只可作为兼容路径，不能承诺主路径交互性能。
 
@@ -26,7 +27,8 @@ Envisle 安装后直接创建并拥有独立 `Environment`。每个实例默认�
 
 - 已完成初始化：[讨论成果驱动的项目初始化](docs/archive/done-log.md#t-001)
 - 已冻结 MVP 与公开名称：[首个 MVP 产品路径与公开名称决策](docs/archive/done-log.md#t-004)
-- 下一主线：[macOS Runtime Provider 探针](docs/TODO.md#t-002)
+- 已完成 Runtime 探针：[macOS Runtime Provider 探针](docs/archive/done-log.md#t-002)
+- 下一主线：[Environment 领域模型与 Provider 契约基线](docs/TODO.md#t-003)
 - 当前真相：[`docs/agent-context/current.md`](docs/agent-context/current.md)
 - 讨论来源：[`docs/research/discussion-source.md`](docs/research/discussion-source.md)
 - 广度调研：[`docs/research/breadth-scan.md`](docs/research/breadth-scan.md)

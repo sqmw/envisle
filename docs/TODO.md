@@ -2,7 +2,7 @@
 
 ## 项目目标
 
-Envisle 安装后创建并拥有独立 Environment，以受管 VM 为默认安全边界，并通过项目显式授权控制宿主共享与网络入口。当前先验证 Apple silicon + macOS 26 上的 ARM64 Linux 环境闭环。
+Envisle 安装后创建并拥有独立 Environment，以受管 VM 为默认安全边界，并通过项目显式授权控制宿主共享与网络入口。Apple ARM64 Linux Runtime 已取得条件性 Go，当前把实测边界收敛为 Environment / Provider / Broker 契约。
 
 ## Milestones
 
@@ -24,34 +24,19 @@ Envisle 安装后创建并拥有独立 Environment，以受管 VM 为默认安�
 
 ## Active Tasks
 
-<a id="t-002"></a>
-### T-002 macOS Runtime Provider 探针
-
-- 标准任务名称：`macOS Runtime Provider 探针`
-- 任务定义版本：`v2`
-- 旧版本摘要：`v1` 原计划同时验证 macOS/Linux/Android 候选 Runtime；已由 `D-002` 收窄为首个可证伪闭环。
-- 状态：`in_progress`
-- 优先级：`P0`
-- 主归属 Milestone：`M-02`
-- 必要依赖：`T-001`。
-- 是什么：验证 Apple silicon + macOS 26 上由项目创建并管理 ARM64 Linux VM 的最小能力、默认隔离和宿主约束。
-- 边界：只做宿主能力、生命周期、独立磁盘、NAT、显式共享/端口的隔离探针与证据；不进入产品化 UI，不验证 macOS/Windows/Android guest，不冻结跨平台实现。
-- 做完算什么：host probe 与 create/start/stop/delete 可复现；guest 就绪、独立磁盘、默认网络隔离及最小共享/端口策略有成功或明确失败证据，并形成 Go/No-Go 结论。
-- 当前步骤：[STEPS / T-002 v2](STEPS.md#steps-t-002-v2)
-
 <a id="t-003"></a>
 ### T-003 Environment 领域模型与 Provider 契约基线
 
 - 标准任务名称：`Environment 领域模型与 Provider 契约基线`
-- 任务定义版本：`v2`
-- 旧版本摘要：`v1` 只定义通用生命周期与 Provider；`v2` 根据 `D-002` 加入产品拥有的 Storage/Share/Network broker 边界。
+- 任务定义版本：`v3`
+- 旧版本摘要：`v1` 只定义通用生命周期与 Provider；`v2` 根据 `D-002` 加入 Storage/Share/Network broker；`v3` 根据 `D-005` 把 guest firewall 的默认拒绝、显式放行、撤销与状态证明纳入 Network Broker 完成定义。
 - 状态：`pending`
 - 优先级：`P1`
 - 主归属 Milestone：`M-02`
-- 必要依赖：`T-001`；应吸收 `T-002 v2` 的实测证据后再冻结接口。
-- 是什么：定义统一 Environment 生命周期、能力声明、Runtime Router 输入输出，以及 Storage/Share/Network broker 与 Provider 边界。
+- 必要依赖：`T-001`、`T-002 v2`。
+- 是什么：定义统一 Environment 生命周期、能力声明、Runtime Router 输入输出，以及 Storage/Share/Network broker、guest policy agent 与 Provider 边界。
 - 边界：只定义首个 ARM64 Linux 受管 VM 闭环所需的最小领域契约和架构测试，不预先承诺全部 host/guest 组合或认证加密存储。
-- 做完算什么：领域术语唯一、默认隔离策略可表达、共享和端口必须经 broker 授权、能力不可用可解释、Provider 可替换，契约测试覆盖核心状态转换。
+- 做完算什么：领域术语唯一；默认无共享、guest-to-guest 不可达、host-to-guest 默认拒绝均可表达并验证；共享和端口必须经 broker 授权且可撤销；guest firewall 实际策略状态可查询；能力不可用可解释；Provider 可替换，契约测试覆盖核心状态转换。
 - 当前步骤：待开始（不预建步骤块）。
 
 ## 当前风险与阻塞
@@ -59,9 +44,10 @@ Envisle 安装后创建并拥有独立 Environment，以受管 VM 为默认安�
 - 讨论快照中的引用标识不包含原始链接，相关技术事实必须重新由一手资料核验。
 - `Envisle` 已完成工程冲突初筛，但商标可用性仍需在域名、商店或付费品牌投入前正式复核；详见 `D-003`。
 - macOS / Windows / Android 的虚拟化、镜像分发和许可边界不同，不能把能力矩阵当作统一承诺。
-- 当前计划外活跃 Task 占比：`0/2`。
+- 当前计划外活跃 Task 占比：`0/1`。
 
 ## 已关闭索引
 
 - `T-001 讨论成果驱动的项目初始化` — `done`，2026-08-19；[关闭证据](archive/done-log.md#t-001)。
 - `T-004 首个 MVP 产品路径与公开名称决策` — `done`，2026-08-19；[关闭证据](archive/done-log.md#t-004)。
+- `T-002 macOS Runtime Provider 探针` — `done`，2026-08-19；[关闭证据](archive/done-log.md#t-002)。
