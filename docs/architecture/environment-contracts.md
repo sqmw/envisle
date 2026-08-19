@@ -2,7 +2,7 @@
 
 ## 问题建模
 
-Envisle 不能把“VM 进程已启动”“策略命令已发送”和“用户环境已安全可用”混为一个状态。首个 MVP 把事实分为三层：
+Envisle 不能把“VM 进程已启动”“策略命令已发送”和“用户环境已安全可用”混为一个状态。首个 MVP 把事实分为四层：
 
 1. `EnvironmentLifecycle`：Envisle 对资源生命周期的规范化状态；
 2. `DesiredEnvironmentPolicy`：用户通过 Broker 明确授权后的完整目标状态；

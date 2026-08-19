@@ -2,7 +2,7 @@
 
 ## 证据边界
 
-- 截止日期：2026-08-19。
+- 截止日期：2026-08-19。本文件是初始化阶段研究快照；后续 Decision 已取代的产品假设保留用于溯源，不代表当前建议。
 - 证据以 Apple、Microsoft、Android、QEMU 和竞品官方文档/官方仓库为主。
 - 本轮完成静态资料核验与本机工具链检查；没有实际启动 VM、container、WSL、AVF 或 Android Emulator。
 - 许可归纳不是法律意见；公开品牌仍需正式商标检索。
@@ -19,8 +19,8 @@
 | Android desktop | Android Emulator 可被 CLI 编排，但官方定位是应用开发/测试 | 商业嵌入与再分发前需专项许可；不进首个 MVP |
 | Android host | AVF/pKVM 的 pVM 权限限平台签名应用；Microdroid 无完整 Android UI/SystemServer | 普通 Play APK 路线禁用；仅 OEM/系统镜像合作时重开 |
 | QEMU | HVF/WHPX 同 ISA 加速；跨 ISA 依赖 TCG | 运行时必须报告实际 accelerator，禁止静默性能降级 |
-| 竞争扫描推断 | 已扫描的官方资料显示单后端产品功能很深；“跨独立 VM + container provider 的 capability-aware 控制面有市场空间”仍是待验证产品假设 | 首版不可复制成熟 hypervisor/容器后台的全部功能；必须用真实用户与多 Provider 原型验证价值 |
-| 名称 | GitHub 已有 `OSDeck` 组织、Client/Host/Emulator 等软件仓库 | 当前仅作为工作代号，公开发布前决定改名或完成正式检索 |
+| 竞争扫描推断 | 初始化时提出“跨独立 VM + container provider 的 capability-aware 控制面”假设；已由 `D-002` 的 VM-first Managed Runtime MVP 取代 | 仅作历史假设，不再指导首验 |
+| 名称 | GitHub 已有 `OSDeck` 组织、Client/Host/Emulator 等软件仓库 | 已由 `D-003` 取代：标准名称和 repository slug 均为 `Envisle/envisle` |
 
 ## Apple 证据
 
@@ -64,7 +64,7 @@
 - [Multipass](https://canonical.com/multipass/docs/latest/)：跨平台 Ubuntu instance，能力受 driver 影响。
 - [Android Emulator](https://developer.android.com/studio/run/managing-avds)：专用 device/AVD 模型。
 
-本轮定向覆盖上述产品的官方资料，不是完整市场普查。由此提出的**产品假设**是：统一发现、解释和控制不同类型的本地 Environment，同时不抹平 Provider 能力差异，可能比“再造一个 hypervisor”更适合作为首个验证入口。该判断尚未由用户访谈、安装基数或付费数据证实；最低验证方式是让真实目标用户用同时连接 VM 与 container/machine Provider 的原型完成发现、判断状态和安全启停任务，并对比其现有工作流。
+本轮定向覆盖上述产品的官方资料，不是完整市场普查。初始化时提出的“同时连接 VM 与 container/machine Provider”产品假设已经被 `D-002` 的 VM-first Managed Runtime MVP 取代，不再是当前首验方向；其未获得用户访谈、安装基数或付费数据支持的证据边界继续保留。
 
 ## 名称冲突初筛
 

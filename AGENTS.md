@@ -7,9 +7,9 @@
 
 ## 项目事实
 
-1. 当前阶段：macOS Runtime Probe 已形成条件性 Go，等待 `T-003 v3` 冻结 Environment/Provider/Broker 契约。
-2. 当前技术状态：尚未冻结 UI、Core 或 Provider 的实现语言；讨论中的 Flutter、Rust、Swift 是候选，不是已批准基线。
-3. 当前首发目标宿主：Apple silicon + macOS 26，首个 guest 为 ARM64 Linux；`P-ENVI-001` 已在一台 Apple M2/macOS 26.5.1 上通过生命周期、独立磁盘和只读共享探针，但正式支持仍需契约与产品级验证。
+1. 当前阶段：`T-003 v3` 已冻结首个 Environment/Provider/Broker 领域契约；`T-005 v1` 正在执行全局漂移审查与最终产品方案定稿。
+2. 当前技术状态：macOS host Control Plane、Broker 编排和 Apple Provider 已冻结为单一签名 Swift 进程内分层；UI 与 guest agent 实现语言尚未冻结，也没有正式 App、Provider 或 agent 实现。
+3. 当前首发目标宿主：Apple silicon + macOS 26，首个 guest 为 ARM64 Linux；`P-ENVI-001` 已在一台 Apple M2/macOS 26.5.1 上通过生命周期、独立磁盘和只读共享探针，但正式支持仍需产品实现、宿主网络权威与安全验证。
 4. 冻结基线：`docs/architecture/mvp-baseline.md` 与 `D-002`；任何改变默认 VM 隔离、默认关闭共享/入站网络或产品受管生命周期的方案都需用户明确解冻。
 5. 主 TODO：`docs/TODO.md`；主 STEPS：`docs/STEPS.md`；主 DECISIONS：`docs/DECISIONS.md`。
 6. 运行数据边界：VM 磁盘、镜像、缓存、日志、数据库、快照、凭据与下载包一律置于仓库和同步目录之外。

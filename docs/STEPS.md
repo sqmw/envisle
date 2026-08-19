@@ -17,15 +17,19 @@
 
 ### Step 1 — 全局事实、源码、文档与外部证据审查
 
-- 状态：`in_progress`
+- 状态：`completed`
 - 步骤开场摘要：并行审查代码契约、安全模型、文档任务状态、macOS 交付限制和当前竞品定位，建立漂移清单与证据边界；只修正不涉及方案取舍的客观漂移。
 - 完成判据：仓库/远端/测试状态已核验；所有 P0/P1 漂移可定位；外部时效性事实有一手来源；冻结基线未被修改。
 
+- 完成证据：六个只读审查覆盖源码契约、文档状态、产品架构、安全、macOS 交付与竞品；定位并修复 T-003/语言状态、MVP container 验收、未实现 capability/provenance、D-006、历史市场假设与层数等客观漂移。代码契约另发现 Provider observation、stop/reconcile、quarantine、lease/revision、disk/audit 和 mount namespace 等产品化前 P1；不在本 Task 改代码。
+
 ### Step 2 — 比较候选并确定最终产品方案
 
-- 状态：`not_started`
+- 状态：`in_progress`
 - 步骤开场摘要：在已核验约束内比较 2–3 条产品收敛路径，按用户价值、差异化、实现风险、证据缺口和退出条件选定唯一方案。
 - 完成判据：目标用户与核心任务唯一；Must/Should/Not now 明确；技术栈、进程、Provider、Guest、Broker、镜像、分发和阶段路线无互相冲突；被否决选项与触发重评条件可追溯。
+
+- 当前决策门：推荐“权限化本地软件运行平台”，以 AI 工具/不可信自动化为首个 wedge；该定位要求宿主网络权威，构成对 D-005/D-007 的具体冻结变更。已形成提案，等待用户明确解冻后才能进入 Step 3 的 accepted Decision。
 
 ### Step 3 — 记录 Decision 并同步产品与项目文档
 

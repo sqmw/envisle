@@ -11,7 +11,7 @@ Environment Application Service
        |
 Capability-aware Runtime Router
        |
-Provider adapters
+Provider adapters（长期扩展视图；MVP 仅 managed VM）
   |          |          |
 Container    VM         Emulator / Device
 ```
@@ -23,8 +23,8 @@ Container    VM         Emulator / Device
 - Identity：Environment、Provider 与每次启动唯一的 RuntimeInstance ID；`id`、`name`、`provider_id`、`kind`
 - Placement：`host_os`、`host_arch`、`guest_os`、`guest_arch`
 - State：规范化 lifecycle + Provider 原始状态；`running` 不等于 `ready`
-- Capabilities：发现、创建、启动、停止、暂停、快照、终端、显示、删除等独立声明
-- Provenance：原始 Provider ID、版本、配置来源与可回退命令
+- Capabilities：当前源码只冻结创建、启动、停止、删除与安全策略查询/隔离等 Managed VM 最低能力；暂停、快照、终端与显示仍是未来扩展
+- Provenance：当前源码保留 Provider ID、原生资源 ID 与原始状态；实际 accelerator、配置来源和回退句柄尚待正式 Provider observation 契约补齐
 - Policy：固定默认拒绝、显式共享/端口授权、schema/revision/digest、租约，以及分别由 Guest Agent/Host Share Broker 提供的 Network/Share applied evidence
 
 ## 方案取舍
@@ -47,5 +47,5 @@ Container    VM         Emulator / Device
 2. 资源发现保留原始 ID，重复刷新不会复制资源。
 3. UI/API 只暴露 capability 允许的动作。
 4. 启停结果与 Provider 原始状态一致，失败保留原始错误码。
-5. QEMU 路径报告实际 accelerator；许可敏感路径报告 review gate。
+5. 正式 Provider observation 报告实际 accelerator；许可敏感路径在未来 Provider admission 层报告 review gate。两者当前均未在领域契约实现。
 6. Network Broker 的 desired/applied policy 分离；guest policy agent 未证明默认拒绝时，不得把“未声明端口规则”显示为“宿主不可达”。

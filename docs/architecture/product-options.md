@@ -9,10 +9,10 @@
 - 决策：**采用，并收敛为 Managed Runtime Platform。**
 
 - 解决：用户无需预装后端，Envisle 自己提供环境创建和运行。
-- 候选后端：Virtualization.framework、Apple `container`、QEMU；Windows 后续接 Hyper-V/WHP/WSL2。
+- 首发后端：Virtualization.framework 上的 ARM64 Linux 受管 VM；Apple `container`、QEMU 与 Windows Provider 仅保留为后续独立评估对象。
 - 优点：产品体验可控，长期形成真正统一的环境平台。
 - 成本：需要承担镜像、网络、磁盘、快照、guest integration、安全更新与许可策略。
-- 首个验收：Apple silicon + macOS 26 上至少一条 VM 和一条 container 路径完成创建、启停、删除及错误回收。
+- 首个验收：Apple silicon + macOS 26 上一条 ARM64 Linux VM 路径完成创建、启停、删除、独立系统盘、默认无共享及错误回收；Container 不进入 MVP 验收。
 - 触发条件：愿意把首期重点放在底层 Runtime 工程，而不是先验证统一控制面需求。
 
 ## Option B — Local Control Plane
