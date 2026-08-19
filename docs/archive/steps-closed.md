@@ -46,3 +46,37 @@
 
 - 关闭结果：`done`
 - 遗留风险：产品路径、公开名称、实现语言和 Runtime 实测仍由 `T-004`、`T-002`、`T-003` 承接。
+
+<a id="steps-t-004-v1"></a>
+## T-004 v1 — 首个 MVP 产品路径与公开名称决策
+
+- 关闭记录：[Done Log / T-004](done-log.md#t-004)
+- 任务定义版本：`v1`
+- 块所有者：`/root`
+- 最后更新时间：`2026-08-19 Asia/Shanghai`
+- 写入模式：`single-writer`。
+- 执行授权：`explicit`；用户要求综合选择满足独立环境与项目受控共享的 MVP，并授权通过 `gh` 修改 GitHub 仓库名称。
+- 目的意图：冻结由项目创建并拥有隔离实例的 Runtime Platform，以 VM 为默认边界、产品授权为唯一默认共享路径；选择新名称并完成本地和 GitHub 迁移，不实现 Runtime、UI 或 guest agent。
+
+### Step 1 — 冻结产品与安全边界
+
+- 状态：`已完成`
+- 实测结果：接受 `D-002`；选择 Managed Runtime Platform，以一 Environment 一受管 VM 为默认边界，container 仅作 VM 内优化，共享、环境间通信和入站端口默认关闭；威胁模型不覆盖宿主 root/管理员、内核/hypervisor 失陷和同用户恶意非沙箱进程直接篡改磁盘。
+
+### Step 2 — 选择新名称并核验迁移目标
+
+- 状态：`已完成`
+- 实测结果：接受 `D-003`；选择 `Envisle/envisle`。重命名前 GitHub 目标仓库不存在，GitHub、npm、PyPI、Cargo 与公开网页未发现精确同名软件；该结果是工程冲突初筛，不是正式商标意见。
+
+### Step 3 — 执行本地与 GitHub 名称迁移
+
+- 状态：`已完成`
+- 实测结果：有效项目术语迁移为 Envisle；提交 `b55c57b` 已推送。GitHub 从 `sqmw/osdesk` 重命名为 `sqmw/envisle`，仍为 `PUBLIC`、默认分支仍为 `main`；origin 已更新为新 URL，旧 URL 返回到新 URL 的重定向。
+
+### Step 4 — Review、验证与关闭
+
+- 状态：`已完成`
+- 实测结果：架构、Decision、任务定义、P1 当前真相与公开名称一致性 review 无未闭环发现；`git diff --check`、Bash 语法和 `make check` 通过；新 URL、旧 URL 重定向、origin、默认分支和远端 head 均已核验。`T-002/T-003` 升级为 `v2` 以承接冻结边界。
+
+- 关闭结果：`done`
+- 遗留风险：正式商标检索未做；Runtime 可行性、共享撤销语义和实现语言仍由 `T-002 v2`、`T-003 v2` 承接。

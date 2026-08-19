@@ -25,7 +25,8 @@ Envisle 安装后直接创建并拥有独立 `Environment`。每个实例默认�
 ## 项目状态
 
 - 已完成初始化：[讨论成果驱动的项目初始化](docs/archive/done-log.md#t-001)
-- 当前执行：[首个 MVP 产品路径与公开名称决策](docs/TODO.md#t-004)
+- 已冻结 MVP 与公开名称：[首个 MVP 产品路径与公开名称决策](docs/archive/done-log.md#t-004)
+- 下一主线：[macOS Runtime Provider 探针](docs/TODO.md#t-002)
 - 当前真相：[`docs/agent-context/current.md`](docs/agent-context/current.md)
 - 讨论来源：[`docs/research/discussion-source.md`](docs/research/discussion-source.md)
 - 广度调研：[`docs/research/breadth-scan.md`](docs/research/breadth-scan.md)
@@ -43,7 +44,7 @@ make check
 
 ## 本机与运行数据边界
 
-本仓库可能由 Syncthing 复制到其他机器。未来的 VM 磁盘、系统镜像、下载包、缓存、日志、数据库、快照、密钥和运行状态不得放入仓库；代码应通过 `OSDECK_STATE_DIR`、`OSDECK_CACHE_DIR` 等运行时目录变量解析。变量的最终名称在实现前由领域模型任务确认。
+本仓库可能由 Syncthing 复制到其他机器。未来的 VM 磁盘、系统镜像、下载包、缓存、日志、数据库、快照、密钥和运行状态不得放入仓库；代码应通过 `ENVISLE_STATE_DIR`、`ENVISLE_CACHE_DIR` 等运行时目录变量解析。变量的最终契约在实现前由领域模型任务确认。
 
 ## License
 

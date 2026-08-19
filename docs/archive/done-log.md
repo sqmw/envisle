@@ -9,3 +9,13 @@
 - 相关提交：本条所在提交。
 - 文档索引：[`讨论来源`](../research/discussion-source.md)、[`广度调研`](../research/breadth-scan.md)、[`架构边界`](../architecture/overview.md)、[`产品路径`](../architecture/product-options.md)、[`关闭步骤`](steps-closed.md#steps-t-001-v1)。
 - 遗留风险：首个 MVP 路径与公开名称待 `T-004`；Runtime 探针待 `T-002`；领域契约待 `T-003`。
+
+<a id="t-004"></a>
+## 2026-08-19 — T-004 首个 MVP 产品路径与公开名称决策
+
+- 任务定义版本：`v1`
+- 结果摘要：冻结 Managed Runtime Platform 产品路径，以一 Environment 一受管 VM 为默认安全边界，以显式、可撤销、可审计授权控制共享和入站端口；公开名称确定为 `Envisle`，GitHub repository 已迁移为 `sqmw/envisle`。
+- 验证方式：架构/Decision/TODO/P1 一致性 review；`git diff --check`、`bash -n scripts/check-project.sh`、`make check`；GitHub 新 URL 200、旧 URL 301、origin/默认分支/visibility/远端 head 核验。
+- 相关提交：`b55c57b` 与本条所在提交。
+- 文档索引：[`MVP 冻结基线`](../architecture/mvp-baseline.md)、[`名称选择`](../research/name-selection.md)、[`有效 Decisions`](../DECISIONS.md)、[`关闭步骤`](steps-closed.md#steps-t-004-v1)。
+- 遗留风险：Runtime 尚未实测；正式商标检索未做；认证加密存储与抵御同用户恶意宿主进程不在 MVP 已承诺能力内。
