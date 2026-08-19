@@ -24,13 +24,13 @@
 
 ### Step 2 — 实现最小领域模型与 Provider/Broker 契约
 
-- 状态：`in_progress`
+- 状态：`completed`
 - 步骤开场摘要：在 Parent 仓库从零建立 Swift Package，只实现纯领域类型、状态转换、能力路由、授权与 desired/applied policy 对账，不接入平台框架。
 - 完成判据：源码职责单一、无 Virtualization.framework 依赖；Environment 只有在 Runtime 与目标策略均已实际满足时才可 ready；不支持能力返回稳定且可解释的失败。
 
 ### Step 3 — 建立架构测试与文档导航
 
-- 状态：`not_started`
+- 状态：`in_progress`
 - 步骤开场摘要：用测试固定生命周期、默认拒绝、授权撤销、策略失配和 Provider 路由语义，并同步 README、架构说明、代码地图与工具链基线。
 - 完成判据：核心正反路径均有自动化证据；Agent 可从文档入口定位模块、入口、测试和安全边界；长期文档不含机器绝对路径。
 

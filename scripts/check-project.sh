@@ -39,7 +39,14 @@ for path in "${runtime_dirs[@]}"; do
   fi
 done
 
-if find . -path './.git' -prune -o -type f \( \
+if find . \
+  -path './.git' -prune -o \
+  -path './.build' -prune -o \
+  -path './build' -prune -o \
+  -path './dist' -prune -o \
+  -path './target' -prune -o \
+  -path './node_modules' -prune -o \
+  -type f \( \
   -name '*.img' -o -name '*.qcow2' -o -name '*.raw' -o \
   -name '*.iso' -o -name '*.ipsw' -o -name '*.vhd' -o \
   -name '*.vhdx' -o -name '*.db' -o -name '*.sqlite' -o \

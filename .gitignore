@@ -11,6 +11,7 @@
 *.pem
 
 # Build output and package caches
+.build/
 build/
 dist/
 target/
