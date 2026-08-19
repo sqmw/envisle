@@ -60,3 +60,23 @@
 - 受影响实体与由此产生的约束：`T-003 v3` 必须显式决定模块、进程与语言边界；在其关闭前不生成正式多语言产品骨架。Swift Probe 代码不提升，只作为调用与 entitlement 证据。
 - 状态：`accepted`
 - 相关提交：本条所在提交；取代 `D-004`。
+
+<a id="d-007"></a>
+## D-007 — macOS MVP 采用单进程 Swift 宿主与语言无关 Guest Policy 协议
+
+- 日期：2026-08-19
+- 一句话结论：macOS MVP 的 Control Plane、Broker 编排和 Apple Runtime Provider 位于同一签名用户进程，以 Swift 分层实现；纯领域模块不依赖 Apple API，guest policy agent 是 VM 内独立进程并通过版本化、语言无关契约交换 desired/applied policy，agent 实现语言暂不冻结。
+- 背景与触发原因：T-002 已实测 Swift 与 Virtualization.framework、entitlement 和 VM 生命周期可行，同时证明 VZNAT 不能单独兑现宿主到 guest 的默认拒绝；T-003 需要在最少分布式状态和最小打包面下，把生命周期与安全策略的实际状态统一对账。
+- 产生上下文：Project `Envisle`，Milestone `M-02`，Task `T-003 v3`，Step 1；用户授权由 Agent 综合选择最佳 MVP 方案并明确要求按建议推进。
+- 收益：原生框架调用、签名、entitlement 和错误保真不经过 FFI/IPC；Environment、Broker 与 Provider 在一个事务边界内协调；纯领域模块和版本化 guest 协议仍可独立测试并为未来 Provider 复用。
+- 成本与风险：宿主领域代码首阶段不能直接复用于 Windows/Android；单进程故障域较大；若平台数量增加，Swift 领域实现可能出现重复。通过模块依赖单向化、Provider 隔离、稳定值类型和语言无关协议控制迁移成本。
+- 被否决的选项及理由：
+  - Flutter UI + Rust Core + Swift FFI 立即并行：在没有 UI 或第二平台 Provider 的条件下先引入三套工具链、FFI 生命周期和跨进程/跨语言错误映射，不能补上当前 guest policy 证据缺口。
+  - 把正式 Provider 独立为 helper 进程：现阶段没有权限隔离或崩溃恢复的实测收益，却会增加签名、entitlement、IPC、状态重放和错误归因面。
+  - 全部逻辑写入 Provider：会把 Environment 语义绑定到 Apple API，阻断替换 Provider 和纯领域测试。
+  - 立即冻结 guest agent 为 Swift 或 Rust：T-002 未验证 guest 内分发、升级、静态链接和协议恢复，不足以决定实现语言；协议边界才是当前必须冻结的部分。
+- 冻结不变量：一个 Environment 拥有一个受管 VM 与独立系统盘；默认无宿主目录共享、无 host-to-guest allow、无 guest-to-guest 通信承诺；所有共享和端口入口均由 Broker 产生版本化授权；只有 Runtime 已运行、guest agent 健康且 applied policy 与 desired policy 的 revision/digest 一致时 Environment 才为 ready；无法证明策略时必须保持隔离或停止，不能沿用“最后一次成功”宣称安全。
+- 迁移触发条件：第二个正式宿主 Provider 出现已证实的重复领域逻辑，或签名/权限/崩溃隔离要求证明必须拆进程时，另立 Decision 评估共享 Rust Core 或 helper；触发前不提前生成多语言骨架。guest agent 的实现语言须在完成传输、升级、失联和 fail-closed Probe 后另行冻结。
+- 受影响实体与由此产生的约束：`T-003` 产品源码从纯 Swift 领域 Package 起步，禁止依赖 Virtualization.framework；后续 Apple Provider 才接入原生框架；Network Broker 必须对账 desired/applied policy，不把已发送命令视为已实施；本条补齐并取代 `D-006` 中未决的模块/进程/语言边界。
+- 状态：`accepted`
+- 相关提交：本条所在提交。

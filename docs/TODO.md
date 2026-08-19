@@ -30,14 +30,14 @@ Envisle 安装后创建并拥有独立 Environment，以受管 VM 为默认安�
 - 标准任务名称：`Environment 领域模型与 Provider 契约基线`
 - 任务定义版本：`v3`
 - 旧版本摘要：`v1` 只定义通用生命周期与 Provider；`v2` 根据 `D-002` 加入 Storage/Share/Network broker；`v3` 根据 `D-005` 把 guest firewall 的默认拒绝、显式放行、撤销与状态证明纳入 Network Broker 完成定义。
-- 状态：`pending`
+- 状态：`in_progress`
 - 优先级：`P1`
 - 主归属 Milestone：`M-02`
 - 必要依赖：`T-001`、`T-002 v2`。
 - 是什么：定义统一 Environment 生命周期、能力声明、Runtime Router 输入输出，以及 Storage/Share/Network broker、guest policy agent 与 Provider 边界。
 - 边界：只定义首个 ARM64 Linux 受管 VM 闭环所需的最小领域契约和架构测试，不预先承诺全部 host/guest 组合或认证加密存储。
 - 做完算什么：领域术语唯一；默认无共享、guest-to-guest 不可达、host-to-guest 默认拒绝均可表达并验证；共享和端口必须经 broker 授权且可撤销；guest firewall 实际策略状态可查询；能力不可用可解释；Provider 可替换，契约测试覆盖核心状态转换。
-- 当前步骤：待开始（不预建步骤块）。
+- 当前步骤：Step 2 — 实现最小领域模型与 Provider/Broker 契约；详见 [`docs/STEPS.md`](STEPS.md#steps-t-003-v3)。
 
 ## 当前风险与阻塞
 
