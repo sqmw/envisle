@@ -1,8 +1,8 @@
 # 当前真相
 
 - 更新日期：2026-08-19
-- 当前主线：`T-003 v3 Environment 领域模型与 Provider 契约基线` 正在执行架构测试与文档收口。
-- 当前状态：`T-001 v1`、`T-004 v1` 与 `T-002 v2` 已关闭；纯领域 Swift Package 已建立，正式 App/Provider/guest agent 尚未开始。
+- 当前主线：无活跃 Task；下一候选是 Guest Policy Agent Probe，尚未正式建立或授权。
+- 当前状态：`T-001 v1`、`T-004 v1`、`T-002 v2` 与 `T-003 v3` 已关闭；纯领域 Swift Package 与契约测试已建立，正式 App/Provider/guest agent 尚未开始。
 
 ## 当前有效结论
 
@@ -27,6 +27,7 @@
 - VM、容器和 AVD 的镜像/快照/网络语义不能统一承诺。
 - VZNAT 环境间 TCP 在当前双实例探针中不可达，但宿主可直接连接 guest；端口默认拒绝必须由 guest firewall 实施并证明。
 - 本项目位于可能同步到 Windows 的工作区，运行数据必须置于仓库和同步目录外。
+- T-003 的独立工程 review 已 PASS，但项目尚无冻结的安全审核计划/plan hash/资格矩阵，不能把它称为正式安全认证。
 
 ## 验证与导航
 

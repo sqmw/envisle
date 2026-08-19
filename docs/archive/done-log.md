@@ -29,3 +29,14 @@
 - 相关提交：Parent 本条所在提交；Probe `0a23059`、`69ea09c`、`e0740b2`。
 - 文档索引：[`Probe 结论`](../research/macos-runtime-probe.md)、[`D-005`](../DECISIONS.md#d-005)、[`MVP 基线`](../architecture/mvp-baseline.md)、[`关闭步骤`](steps-closed.md#steps-t-002-v2)。
 - 遗留风险：产品级 guest firewall/agent、端口 allow/revoke、write-share 撤销、持久系统镜像、崩溃恢复、性能与分发签名尚未验证；由 `T-003 v3` 先承接契约边界。
+
+<a id="t-003"></a>
+## 2026-08-19 — T-003 Environment 领域模型与 Provider 契约基线
+
+- 任务定义版本：`v3`
+- 结果摘要：建立 macOS MVP 的纯 Swift `EnvisleDomain` Package，冻结单一签名宿主进程、平台无关领域层、原生 Provider adapter 与独立 Guest Policy 协议边界；实现 Environment 状态机、Managed Runtime 最低安全能力、Storage/Share/Network Broker、显式授权/撤销、Network/Share applied evidence、RuntimeInstanceID、策略版本/摘要/租约和 fail-closed ready 判定。
+- 验证方式：debug/release Swift 构建与 25 个领域/架构测试通过；`make check`、Markdown 链接、Bash 语法、仓库外脚本入口、无平台框架反向依赖和无长期机器绝对路径检查通过。第一轮独立工程 review 的 6 个 P1 全部修复，第二轮确认 `6/6 PASS` 且无新增 P0/P1。
+- 相关提交：`76227c3`、`cb30f09`、`71fd316`、`15bb291` 与本条所在提交。
+- 文档索引：[`Environment 契约`](../architecture/environment-contracts.md)、[`代码地图`](../architecture/code-map.md)、[`D-007`](../DECISIONS.md#d-007)、[`关闭步骤`](steps-closed.md#steps-t-003-v3)。
+- 证据边界：以上只证明领域契约与自动化反例；没有实现或实测正式 Apple Provider、受认证 Guest transport、真实 firewall、端口 allow/revoke、watchdog 或动态 share revoke。独立工程 review 不是正式安全认证。
+- 遗留风险：下一候选应以隔离 Probe 验证 Guest Policy Agent 的认证、防重放、default deny、allow/revoke、租约超时自隔离和崩溃恢复；通过前不能宣称 host-to-guest 默认拒绝已成为产品能力。

@@ -29,7 +29,8 @@ Envisle 安装后直接创建并拥有独立 `Environment`。每个实例默认�
 - 已完成初始化：[讨论成果驱动的项目初始化](docs/archive/done-log.md#t-001)
 - 已冻结 MVP 与公开名称：[首个 MVP 产品路径与公开名称决策](docs/archive/done-log.md#t-004)
 - 已完成 Runtime 探针：[macOS Runtime Provider 探针](docs/archive/done-log.md#t-002)
-- 下一主线：[Environment 领域模型与 Provider 契约基线](docs/TODO.md#t-003)
+- 已完成领域契约：[Environment 领域模型与 Provider 契约基线](docs/archive/done-log.md#t-003)
+- 当前无活跃 Task；下一候选是用独立 Probe 实测 Guest Policy Agent 的认证传输、default deny、allow/revoke、租约失联与恢复。
 - 当前真相：[`docs/agent-context/current.md`](docs/agent-context/current.md)
 - 讨论来源：[`docs/research/discussion-source.md`](docs/research/discussion-source.md)
 - 广度调研：[`docs/research/breadth-scan.md`](docs/research/breadth-scan.md)
@@ -49,7 +50,7 @@ make check
 
 ## 本机与运行数据边界
 
-本仓库可能由 Syncthing 复制到其他机器。未来的 VM 磁盘、系统镜像、下载包、缓存、日志、数据库、快照、密钥和运行状态不得放入仓库；代码应通过 `ENVISLE_STATE_DIR`、`ENVISLE_CACHE_DIR` 等运行时目录变量解析。变量的最终契约在实现前由领域模型任务确认。
+本仓库可能由 Syncthing 复制到其他机器。未来的 VM 磁盘、系统镜像、下载包、缓存、日志、数据库、快照、密钥和运行状态不得放入仓库；代码应通过 `ENVISLE_STATE_DIR`、`ENVISLE_CACHE_DIR` 等运行时目录变量解析。变量的具体解析与迁移契约在引入运行数据的实现 Task 中冻结。
 
 ## License
 

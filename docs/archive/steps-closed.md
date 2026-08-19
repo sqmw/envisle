@@ -115,3 +115,40 @@
 - 关闭结果：`done`；Provider=`conditional Go`，VZNAT-only 端口策略=`No-Go`。
 - 相关提交：Parent 本条所在提交；Probe `0a23059`、`69ea09c`、`e0740b2`。
 - 遗留风险：guest firewall 的 default deny/allow/revoke/attestation、write-share 撤销、产品 guest image、崩溃恢复、性能和分发签名由后续任务验证。
+
+<a id="steps-t-003-v3"></a>
+## T-003 v3 — Environment 领域模型与 Provider 契约基线
+
+- 关闭记录：[Done Log / T-003](done-log.md#t-003)
+- 任务定义版本：`v3`
+- 块所有者：主 Agent；单一工作树写入，独立 Agent 只读 review。
+- 最后更新时间：`2026-08-19 Asia/Shanghai`
+- 执行授权：用户明确要求按 Agent 推荐推进，并已授权由 Agent 综合选择最佳 MVP 方案。
+- 目的意图：把 Probe 的 VM 隔离证据变成产品可依赖、可测试的 Environment/Provider/Broker 契约；不实现 UI、正式 Provider、guest 镜像、Windows/Android Provider 或认证加密存储。
+
+### Step 1 — 冻结模块、进程、语言边界与安全不变量
+
+- 状态：`已完成`
+- 实测结果：接受 `D-007`；macOS MVP 采用单一签名 Swift 宿主，纯领域模块不依赖 Apple API，Guest Policy Agent 以版本化语言无关协议独立运行；未提升 Probe 源码。
+
+### Step 2 — 实现最小领域模型与 Provider/Broker 契约
+
+- 状态：`已完成`
+- 实测结果：从零建立 `EnvisleDomain` Swift Package，包含身份/放置、生命周期、Provider/Router、Storage/Share/Network Broker、Guest Policy 消息、授权集合、desired/applied policy、租约与 ready 判定；无 Virtualization.framework、SwiftUI 或 AppKit 依赖。
+
+### Step 3 — 建立架构测试与文档导航
+
+- 状态：`已完成`
+- 实测结果：25 个测试覆盖合法/非法生命周期、failed 删除门禁、默认空授权、share/port allow/revoke、Guest Policy 四消息与响应关联、RuntimeInstance evidence、Share 新鲜度、invalid desired、租约失效、最低 capability 与跨架构拒绝；README、代码地图、架构和当前真相同步。
+
+### Step 4 — Review、验证并关闭 T-003 / M-02
+
+- 状态：`已完成`
+- 实测结果：第一轮独立工程 review 发现 6 个 P1，Step 3 重开并全部修复；第二轮确认 `6/6 PASS`、无新增 P0/P1。debug/release 测试、`make check`、`git diff --check`、链接/路径/依赖检查均通过，提交已推送。
+
+### 变更记录
+
+- 2026-08-19：第一轮 review 后重开 Step 3，补齐 failed 删除、RuntimeInstanceID、Share freshness、响应关联、Managed Runtime 固定安全 profile、invalid desired 和授权撤销反例；Task 定义仍为 `v3`。
+
+- 关闭结果：`done`；Milestone `M-02` 同步关闭。
+- 遗留风险：领域测试不等于真实 guest firewall/transport，也不构成正式安全认证；Guest Policy Agent 仍需独立 Probe。
