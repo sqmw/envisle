@@ -43,7 +43,7 @@ Envisle 安装后直接创建并拥有独立 `Environment`。每个实例默认�
 make check
 ```
 
-做对时命令退出码为 `0`，16 个领域/架构测试全部通过，并确认必需入口、内部 Markdown 链接和同步目录安全约束存在；典型失败是状态机非法跳转被接受、旧策略 evidence 被判 ready、Router 静默跨架构 fallback、相对链接失效或把运行数据目录放入仓库。
+做对时命令退出码为 `0`，25 个领域/架构测试全部通过，并确认必需入口、内部 Markdown 链接和同步目录安全约束存在；典型失败是 stop 失败后仍可删除、旧 Runtime evidence 被判 ready、Guest Policy 响应串线、Router 绕过最低安全能力、相对链接失效或把运行数据目录放入仓库。
 
 领域与协议的完整验收边界见 [`docs/architecture/environment-contracts.md`](docs/architecture/environment-contracts.md)。
 

@@ -43,11 +43,11 @@ defined -> preparing -> stopped -> starting -> running
                             |                    v
                             +----- stopping <----+
 
-defined / stopped / failed -> deleting -> deleted
-active operation --failure-> failed --reconcile-> stopped
+defined / stopped -> deleting -> deleted
+active operation --failure-> failed --reconcile-> stopped or deleted
 ```
 
-转换由 Provider 证据驱动。请求 start 只进入 `starting`；收到实际 started 证据后才进入 `running`。非法跳转返回带原状态与事件的错误，不能改写当前状态。
+转换由 Provider 证据驱动。请求 start 只进入 `starting`；收到实际 started 证据后才进入 `running`。`failed` 不代表 Runtime 已停止，必须先由 observe 证明为 stopped/deleted，才能继续启动或删除。非法跳转返回带原状态与事件的错误，不能改写当前状态。
 
 ### 策略身份与租约
 
@@ -58,11 +58,13 @@ active operation --failure-> failed --reconcile-> stopped
 - `digest` 绑定完整策略内容，防止 revision 相同但内容漂移；
 - `PolicyLease` 指定宿主刷新间隔与 guest 失联后恢复默认拒绝的最长时间。
 
-宿主只接受同一 Environment、同一 schema/revision/digest 且状态为 `enforced` 的 Network 与 Share evidence；网络侧还要求 agent 为 `healthy` 且 evidence 未陈旧/过期。Guest Agent 必须以本地单调时钟执行 fail-closed 租约；宿主传入的 Unix 毫秒只用于 evidence 新鲜度判断，不能替代 guest 自身 watchdog。
+每次 start 产生新的 `RuntimeInstanceID`。Network 与 Share evidence 必须同时绑定当前实例；上一启动周期的 evidence 即使 revision/digest 相同且仍在时间窗口内，也不能用于本次 ready。
+
+宿主只接受同一 Environment、当前 RuntimeInstanceID、同一 schema/revision/digest 且状态为 `enforced` 的 Network 与 Share evidence；网络侧还要求 agent 为 `healthy` 且 evidence 未陈旧/过期，Share evidence 最长有效 5 秒并须重新 observe。Guest Agent 必须以本地单调时钟执行 fail-closed 租约；宿主传入的 Unix 毫秒只用于 evidence 新鲜度判断，不能替代 guest 自身 watchdog。
 
 ### Guest Policy v1
 
-`GuestPolicyApplyRequest/Response` 与 `GuestPolicyObserveRequest/Response` 是带 request ID 的版本化 JSON 消息，字段使用稳定的 `snake_case`，ID 编码为单个字符串。未知 protocol version 必须拒绝，不能猜测兼容。Guest 只接收 `DesiredNetworkPolicy` 投影，不能替宿主 Share Broker 证明共享状态；网络策略包含：
+`GuestPolicyApplyRequest/Response` 与 `GuestPolicyObserveRequest/Response` 是带 request ID 的版本化 JSON 消息，字段使用稳定的 `snake_case`，ID 编码为单个字符串。请求与响应都必须拒绝未知 protocol version；响应还必须与原请求的 request ID、Environment、RuntimeInstanceID 及适用的 policy version 对账，不能猜测兼容或接受串线响应。Guest 只接收 `DesiredNetworkPolicy` 投影，不能替宿主 Share Broker 证明共享状态；网络策略包含：
 
 - 固定的 host inbound 默认拒绝与 guest peer 拒绝基线；
 - 零个或多个显式 TCP/UDP guest 端口授权；
@@ -95,7 +97,7 @@ active operation --failure-> failed --reconcile-> stopped
 ## 方案取舍
 
 - 单进程 Swift 宿主减少 entitlement、签名、FFI、IPC 和状态重放面；代价是首阶段不直接复用 Windows 宿主代码。
-- capability set 比“所有 Provider 同一接口能力”更诚实；缺失 `applied_network_policy_query`、`applied_share_policy_query` 或 `quarantine` 的 Provider 不能承载本 MVP。
+- capability set 比“所有 Provider 同一接口能力”更诚实；`routeManagedEnvironment` 从领域内固定的 `ManagedRuntimeSecurityProfile` 派生最低能力，调用方不能传空 required set 降级。缺失 `applied_network_policy_query`、`applied_share_policy_query` 或 `quarantine` 的 Provider 不能承载本 MVP。
 - 租约把宿主崩溃/失联转化为有界 fail-closed，而不是永久保留最后一次端口 allow；代价是需要周期刷新、时序测试和 guest watchdog。
 - 只读共享是 v1 唯一访问级别；动态撤销未获证据时以重启 Environment 完成撤销，不承诺热更新。
 
@@ -107,6 +109,6 @@ active operation --failure-> failed --reconcile-> stopped
 
 当前由 AI/Agent 负责具体 Swift 类型、Provider adapter、Agent transport、错误映射、自动化测试和日志证据；用户只需验收产品级语义：默认隔离是否真实成立、授权是否可见可撤销、失败是否明确。
 
-- 做对了：`make check` 的 16 个测试全部通过；运行中 Environment 只有在相同 Environment 的 Network 与 Share evidence 都匹配、且网络租约有效时才 ready；缺能力的 Provider 返回逐项拒绝原因。
-- 典型失败：VM 一启动就显示 ready；apply receipt 被当作 enforced；agent 失联后旧 allow 无限期存在；share revoke 返回成功但挂载仍可用且界面无重启提示；ARM64 需求静默路由到 x86_64/TCG。
+- 做对了：`make check` 的 25 个测试全部通过；运行中 Environment 只有在相同 Environment、当前 RuntimeInstanceID 的 Network 与 Share evidence 都匹配且新鲜、网络租约有效时才 ready；缺能力的 Provider 返回逐项拒绝原因。
+- 典型失败：VM 一启动就显示 ready；stop 失败后直接 delete；上一启动周期 evidence 被重放；apply receipt 被当作 enforced；响应 request ID/Environment/Runtime/版本串线仍被接受；agent 失联后旧 allow 无限期存在；share revoke 返回成功但挂载仍可用且界面无重启提示；ARM64 需求静默路由到 x86_64/TCG。
 - 下一实现门槛：只有当 guest policy agent Probe 证明受认证传输、默认 drop、端口 allow/revoke、租约超时自隔离和失联恢复后，才能把 Network Broker 从契约提升为产品安全能力。

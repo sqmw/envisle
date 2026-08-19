@@ -12,6 +12,24 @@ public enum RuntimeCapability: String, Codable, CaseIterable, Hashable, Sendable
     case quarantine
 }
 
+public enum ManagedRuntimeSecurityProfile {
+    public static let requiredCapabilities: Set<RuntimeCapability> = [
+        .create,
+        .start,
+        .stop,
+        .delete,
+        .observe,
+        .independentSystemDisk,
+        .readOnlyShareAtBoot,
+        .guestPolicyAgent,
+        .appliedNetworkPolicyQuery,
+        .appliedSharePolicyQuery,
+        .quarantine,
+    ]
+
+    public static let maximumShareEvidenceAgeMilliseconds: UInt64 = 5_000
+}
+
 public struct SupportedRuntime: Codable, Equatable, Hashable, Sendable {
     public let placement: EnvironmentPlacement
 
@@ -42,11 +60,11 @@ public struct ProviderDescriptor: Codable, Equatable, Sendable {
     }
 }
 
-public struct RuntimeRequirement: Equatable, Sendable {
-    public let placement: EnvironmentPlacement
-    public let requiredCapabilities: Set<RuntimeCapability>
+struct RuntimeRequirement: Equatable, Sendable {
+    let placement: EnvironmentPlacement
+    let requiredCapabilities: Set<RuntimeCapability>
 
-    public init(
+    init(
         placement: EnvironmentPlacement,
         requiredCapabilities: Set<RuntimeCapability>
     ) {
@@ -89,7 +107,20 @@ public struct RuntimeRoutingFailure: Error, Equatable, Sendable {
 }
 
 public enum RuntimeRouter {
-    public static func route(
+    public static func routeManagedEnvironment(
+        placement: EnvironmentPlacement,
+        providers: [ProviderDescriptor]
+    ) throws -> RuntimeRoutingDecision {
+        try route(
+            requirement: RuntimeRequirement(
+                placement: placement,
+                requiredCapabilities: ManagedRuntimeSecurityProfile.requiredCapabilities
+            ),
+            providers: providers
+        )
+    }
+
+    static func route(
         requirement: RuntimeRequirement,
         providers: [ProviderDescriptor]
     ) throws -> RuntimeRoutingDecision {
@@ -135,11 +166,18 @@ public enum RuntimeRouter {
 public struct ProviderResource: Codable, Equatable, Sendable {
     public let providerID: ProviderID
     public let providerResourceID: String
+    public let runtimeInstanceID: RuntimeInstanceID?
     public let rawState: String
 
-    public init(providerID: ProviderID, providerResourceID: String, rawState: String) {
+    public init(
+        providerID: ProviderID,
+        providerResourceID: String,
+        runtimeInstanceID: RuntimeInstanceID?,
+        rawState: String
+    ) {
         self.providerID = providerID
         self.providerResourceID = providerResourceID
+        self.runtimeInstanceID = runtimeInstanceID
         self.rawState = rawState
     }
 }

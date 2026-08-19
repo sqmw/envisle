@@ -12,7 +12,7 @@
 4. QEMU 的 HVF/WHPX 只为同 ISA 提供硬件虚拟化；跨 ISA 使用 TCG，必须显式标记兼容模式。
 5. 标准产品名为 `Envisle`、repository slug 为 `envisle`；`OSDeck` / `osdesk` 只作历史旧称。
 6. macOS MVP 宿主采用单一签名 Swift 进程；纯领域层不依赖 Apple API，guest policy agent 经版本化语言无关协议连接，Agent 实现语言尚未冻结。
-7. Environment 只有在 Runtime `running`，且同一 Environment 的 Network/Share applied evidence 均与 desired policy 的 schema/revision/digest 一致、网络租约仍有效时才 `ready`。
+7. Environment 只有在 Runtime `running`，且同一 Environment、当前 RuntimeInstanceID 的 Network/Share applied evidence 均与 desired policy 的 schema/revision/digest 一致并保持新鲜、网络租约仍有效时才 `ready`。
 
 ## 当前待验证
 

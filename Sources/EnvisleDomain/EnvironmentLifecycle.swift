@@ -21,6 +21,7 @@ public enum EnvironmentLifecycleEvent: String, Codable, Equatable, Sendable {
     case deletionSucceeded = "deletion_succeeded"
     case operationFailed = "operation_failed"
     case reconciledStopped = "reconciled_stopped"
+    case reconciledDeleted = "reconciled_deleted"
 }
 
 public struct InvalidLifecycleTransition: Error, Equatable, Sendable {
@@ -58,11 +59,12 @@ public struct EnvironmentLifecycle: Codable, Equatable, Sendable {
         case (.starting, .runtimeStarted): .running
         case (.running, .stopRequested): .stopping
         case (.stopping, .runtimeStopped): .stopped
-        case (.defined, .deletionRequested), (.stopped, .deletionRequested), (.failed, .deletionRequested): .deleting
+        case (.defined, .deletionRequested), (.stopped, .deletionRequested): .deleting
         case (.deleting, .deletionSucceeded): .deleted
         case (.preparing, .operationFailed), (.starting, .operationFailed), (.running, .operationFailed),
              (.stopping, .operationFailed), (.deleting, .operationFailed): .failed
         case (.failed, .reconciledStopped): .stopped
+        case (.failed, .reconciledDeleted): .deleted
         default: nil
         }
     }

@@ -68,7 +68,7 @@ Guest Agent
 - Environment 之间默认互相不可达。
 - 端口发布和环境间网络必须由产品显式创建，并在界面中持续可见。
 - Runtime 初始化失败时不得静默切换到隔离更弱的后端。
-- `P-ENVI-001` 已实测 VZNAT 允许宿主直接连接 guest 服务，因此 NAT attachment 不是 host-to-guest 防火墙；默认拒绝、端口 allow/revoke 和实际策略证明必须由 Network Broker + guest policy agent 实施。Agent 未就绪、evidence 过期或策略身份不匹配时不得 ready；策略租约超时后 guest 必须自行恢复默认拒绝，宿主不能确认隔离时必须停止 VM。
+- `P-ENVI-001` 已实测 VZNAT 允许宿主直接连接 guest 服务，因此 NAT attachment 不是 host-to-guest 防火墙；默认拒绝、端口 allow/revoke 和实际策略证明必须由 Network Broker + guest policy agent 实施。Agent 未就绪、evidence 过期、策略身份不匹配或 evidence 不属于当前 RuntimeInstanceID 时不得 ready；策略租约超时后 guest 必须自行恢复默认拒绝，宿主不能确认隔离时必须停止 VM。
 
 ## 首个 MVP 范围
 

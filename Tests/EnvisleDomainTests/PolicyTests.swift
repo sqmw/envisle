@@ -58,7 +58,7 @@ final class PolicyTests: XCTestCase {
     func testGuestProtocolJSONHasStableSnakeCaseFieldsAndRoundTrips() throws {
         let request = GuestPolicyApplyRequest(
             requestID: "request-1",
-            desiredPolicy: Fixtures.policy().networkProjection
+            desiredPolicy: Fixtures.policy().networkProjection(for: Fixtures.runtimeInstanceID)
         )
 
         let data = try JSONEncoder().encode(request)
@@ -68,8 +68,10 @@ final class PolicyTests: XCTestCase {
 
         let desired = try XCTUnwrap(object["desired_policy"] as? [String: Any])
         XCTAssertEqual(desired["environment_id"] as? String, "environment-1")
+        XCTAssertEqual(desired["runtime_instance_id"] as? String, "runtime-instance-1")
         XCTAssertNotNil(desired["network_baseline"])
         XCTAssertNotNil(desired["inbound_ports"])
+        XCTAssertNil(desired["shares"])
 
         let decoded = try JSONDecoder().decode(GuestPolicyApplyRequest.self, from: data)
         XCTAssertEqual(decoded, request)
@@ -78,7 +80,7 @@ final class PolicyTests: XCTestCase {
         let unsupported = GuestPolicyApplyRequest(
             protocolVersion: 2,
             requestID: "request-2",
-            desiredPolicy: Fixtures.policy().networkProjection
+            desiredPolicy: Fixtures.policy().networkProjection(for: Fixtures.runtimeInstanceID)
         )
         XCTAssertThrowsError(try unsupported.validate()) { error in
             XCTAssertEqual(

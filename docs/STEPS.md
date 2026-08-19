@@ -39,3 +39,7 @@
 - 状态：`in_progress`
 - 步骤开场摘要：检查实现与冻结决策一致性，运行 Swift 测试和项目检查，修复范围内问题后归档步骤与完成证据。
 - 完成判据：review 无未处理的范围内问题；验证通过；T-003 与 M-02 状态、Done Log、当前真相一致；提交可追溯并推送远端。
+
+### 变更记录
+
+- 2026-08-19：Step 4 独立工程 review 发现 6 个 P1，涉及 failed 删除、runtime instance evidence、Guest Policy 响应关联、MVP 最低 capability、非法 desired readiness 和测试闭环。按 review 结果将 Step 3 重新置为 `in_progress`，修复并补反例测试后再进入 Step 4；Task 范围与 `v3` 定义不变。

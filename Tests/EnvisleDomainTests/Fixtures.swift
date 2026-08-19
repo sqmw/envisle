@@ -3,6 +3,8 @@
 enum Fixtures {
     static let environmentID = EnvironmentID(rawValue: "environment-1")
     static let otherEnvironmentID = EnvironmentID(rawValue: "environment-2")
+    static let runtimeInstanceID = RuntimeInstanceID(rawValue: "runtime-instance-1")
+    static let previousRuntimeInstanceID = RuntimeInstanceID(rawValue: "runtime-instance-0")
 
     static let placement = EnvironmentPlacement(
         hostOS: .macOS,
@@ -11,19 +13,7 @@ enum Fixtures {
         guestArchitecture: .arm64
     )
 
-    static let requiredCapabilities: Set<RuntimeCapability> = [
-        .create,
-        .start,
-        .stop,
-        .delete,
-        .observe,
-        .independentSystemDisk,
-        .readOnlyShareAtBoot,
-        .guestPolicyAgent,
-        .appliedNetworkPolicyQuery,
-        .appliedSharePolicyQuery,
-        .quarantine,
-    ]
+    static let requiredCapabilities = ManagedRuntimeSecurityProfile.requiredCapabilities
 
     static func policy(
         environmentID: EnvironmentID = environmentID,
@@ -45,6 +35,7 @@ enum Fixtures {
 
     static func appliedNetwork(
         environmentID: EnvironmentID = environmentID,
+        runtimeInstanceID: RuntimeInstanceID = runtimeInstanceID,
         version: PolicyVersion? = PolicyVersion(revision: 4, digest: "sha256:policy-4"),
         status: AppliedPolicyStatus = .enforced,
         health: GuestAgentHealth = .healthy,
@@ -53,6 +44,7 @@ enum Fixtures {
     ) -> AppliedNetworkPolicyEvidence {
         AppliedNetworkPolicyEvidence(
             environmentID: environmentID,
+            runtimeInstanceID: runtimeInstanceID,
             version: version,
             status: status,
             agentHealth: health,
@@ -63,12 +55,14 @@ enum Fixtures {
 
     static func appliedShares(
         environmentID: EnvironmentID = environmentID,
+        runtimeInstanceID: RuntimeInstanceID = runtimeInstanceID,
         version: PolicyVersion? = PolicyVersion(revision: 4, digest: "sha256:policy-4"),
         status: AppliedPolicyStatus = .enforced,
         observedAt: UInt64 = 10_000
     ) -> AppliedSharePolicyEvidence {
         AppliedSharePolicyEvidence(
             environmentID: environmentID,
+            runtimeInstanceID: runtimeInstanceID,
             version: version,
             status: status,
             observedAtUnixMilliseconds: observedAt

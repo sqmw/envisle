@@ -75,7 +75,7 @@
   - 把正式 Provider 独立为 helper 进程：现阶段没有权限隔离或崩溃恢复的实测收益，却会增加签名、entitlement、IPC、状态重放和错误归因面。
   - 全部逻辑写入 Provider：会把 Environment 语义绑定到 Apple API，阻断替换 Provider 和纯领域测试。
   - 立即冻结 guest agent 为 Swift 或 Rust：T-002 未验证 guest 内分发、升级、静态链接和协议恢复，不足以决定实现语言；协议边界才是当前必须冻结的部分。
-- 冻结不变量：一个 Environment 拥有一个受管 VM 与独立系统盘；默认无宿主目录共享、无 host-to-guest allow、无 guest-to-guest 通信承诺；所有共享和端口入口均由 Broker 产生版本化授权；只有 Runtime 已运行、guest agent 健康且 applied policy 与 desired policy 的 revision/digest 一致时 Environment 才为 ready；无法证明策略时必须保持隔离或停止，不能沿用“最后一次成功”宣称安全。
+- 冻结不变量：一个 Environment 拥有一个受管 VM 与独立系统盘；默认无宿主目录共享、无 host-to-guest allow、无 guest-to-guest 通信承诺；所有共享和端口入口均由 Broker 产生版本化授权；只有 Runtime 已运行、Network/Share evidence 均绑定当前 RuntimeInstanceID 且与 desired policy 的 revision/digest 一致、guest agent 健康且租约有效时 Environment 才为 ready；无法证明策略时必须保持隔离或停止，不能沿用上一启动周期或“最后一次成功”宣称安全。
 - 迁移触发条件：第二个正式宿主 Provider 出现已证实的重复领域逻辑，或签名/权限/崩溃隔离要求证明必须拆进程时，另立 Decision 评估共享 Rust Core 或 helper；触发前不提前生成多语言骨架。guest agent 的实现语言须在完成传输、升级、失联和 fail-closed Probe 后另行冻结。
 - 受影响实体与由此产生的约束：`T-003` 产品源码从纯 Swift 领域 Package 起步，禁止依赖 Virtualization.framework；后续 Apple Provider 才接入原生框架；Network Broker 必须对账 desired/applied policy，不把已发送命令视为已实施；本条补齐并取代 `D-006` 中未决的模块/进程/语言边界。
 - 状态：`accepted`

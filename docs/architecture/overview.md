@@ -20,7 +20,7 @@ Container    VM         Emulator / Device
 
 `T-003 v3` 已在 `EnvisleDomain` 冻结首个 Swift 值类型与语言无关 Guest Policy JSON：
 
-- Identity：`id`、`name`、`provider_id`、`kind`
+- Identity：Environment、Provider 与每次启动唯一的 RuntimeInstance ID；`id`、`name`、`provider_id`、`kind`
 - Placement：`host_os`、`host_arch`、`guest_os`、`guest_arch`
 - State：规范化 lifecycle + Provider 原始状态；`running` 不等于 `ready`
 - Capabilities：发现、创建、启动、停止、暂停、快照、终端、显示、删除等独立声明
@@ -29,7 +29,7 @@ Container    VM         Emulator / Device
 
 ## 方案取舍
 
-- 公共模型使用 capability set，而不是要求每个 Provider 实现所有方法。
+- 公共模型使用 capability set，而不是要求每个 Provider 实现所有方法；Managed Runtime MVP 的最低安全 capability 由领域 profile 固定派生，调用方不能省略。
 - 核心层只依赖 Provider contract；平台 SDK、CLI、QMP/XPC/HCS 类型留在 adapter 内。
 - Router 返回选择理由和拒绝理由，不能只返回一个 runtime 名称。
 - Provider 状态转换必须保留原始错误，不能吞并成笼统布尔值。

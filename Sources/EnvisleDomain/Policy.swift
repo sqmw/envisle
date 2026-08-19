@@ -111,6 +111,7 @@ public struct PolicyLease: Codable, Equatable, Sendable {
 
 public enum PolicyValidationFailure: Error, Equatable, Sendable {
     case environmentIDMissing
+    case runtimeInstanceIDMissing
     case unsupportedSchema(UInt16)
     case revisionMustBePositive
     case digestMissing
@@ -198,9 +199,10 @@ public struct DesiredEnvironmentPolicy: Codable, Equatable, Sendable {
         }
     }
 
-    public var networkProjection: DesiredNetworkPolicy {
+    public func networkProjection(for runtimeInstanceID: RuntimeInstanceID) -> DesiredNetworkPolicy {
         DesiredNetworkPolicy(
             environmentID: environmentID,
+            runtimeInstanceID: runtimeInstanceID,
             version: version,
             networkBaseline: networkBaseline,
             lease: lease,
@@ -221,6 +223,68 @@ public struct DesiredEnvironmentPolicy: Codable, Equatable, Sendable {
     }
 }
 
+public struct EnvironmentAuthorizations: Equatable, Sendable {
+    public private(set) var shares: [ShareAuthorization]
+    public private(set) var inboundPorts: [InboundPortAuthorization]
+
+    public init(
+        shares: [ShareAuthorization] = [],
+        inboundPorts: [InboundPortAuthorization] = []
+    ) throws {
+        self.shares = []
+        self.inboundPorts = []
+        for share in shares {
+            try authorize(share)
+        }
+        for port in inboundPorts {
+            try authorize(port)
+        }
+    }
+
+    public mutating func authorize(_ share: ShareAuthorization) throws {
+        try ensureAuthorizationIDAvailable(share.id)
+        guard !share.hostResourceID.isEmpty else {
+            throw PolicyValidationFailure.hostResourceIDMissing(share.id)
+        }
+        guard !share.guestMountName.isEmpty else {
+            throw PolicyValidationFailure.guestMountNameMissing(share.id)
+        }
+        shares.append(share)
+    }
+
+    public mutating func authorize(_ port: InboundPortAuthorization) throws {
+        try ensureAuthorizationIDAvailable(port.id)
+        guard port.guestPort > 0 else {
+            throw PolicyValidationFailure.invalidGuestPort(port.id)
+        }
+        guard !inboundPorts.contains(where: {
+            $0.transport == port.transport && $0.guestPort == port.guestPort
+        }) else {
+            throw PolicyValidationFailure.duplicateGuestPort(port.transport, port.guestPort)
+        }
+        inboundPorts.append(port)
+    }
+
+    @discardableResult
+    public mutating func revoke(_ id: AuthorizationID) -> Bool {
+        let originalShareCount = shares.count
+        let originalPortCount = inboundPorts.count
+        shares.removeAll { $0.id == id }
+        inboundPorts.removeAll { $0.id == id }
+        return shares.count != originalShareCount || inboundPorts.count != originalPortCount
+    }
+
+    private func ensureAuthorizationIDAvailable(_ id: AuthorizationID) throws {
+        guard !id.rawValue.isEmpty else {
+            throw PolicyValidationFailure.authorizationIDMissing
+        }
+        guard !shares.contains(where: { $0.id == id }),
+              !inboundPorts.contains(where: { $0.id == id }) else {
+            throw PolicyValidationFailure.duplicateAuthorizationID(id)
+        }
+    }
+}
+
 private struct PortKey: Hashable {
     let transport: TransportProtocol
     let guestPort: UInt16
@@ -228,6 +292,7 @@ private struct PortKey: Hashable {
 
 public struct DesiredNetworkPolicy: Codable, Equatable, Sendable {
     public let environmentID: EnvironmentID
+    public let runtimeInstanceID: RuntimeInstanceID
     public let version: PolicyVersion
     public let networkBaseline: NetworkBaseline
     public let lease: PolicyLease
@@ -235,12 +300,14 @@ public struct DesiredNetworkPolicy: Codable, Equatable, Sendable {
 
     public init(
         environmentID: EnvironmentID,
+        runtimeInstanceID: RuntimeInstanceID,
         version: PolicyVersion,
         networkBaseline: NetworkBaseline,
         lease: PolicyLease,
         inboundPorts: [InboundPortAuthorization]
     ) {
         self.environmentID = environmentID
+        self.runtimeInstanceID = runtimeInstanceID
         self.version = version
         self.networkBaseline = networkBaseline
         self.lease = lease
@@ -248,6 +315,9 @@ public struct DesiredNetworkPolicy: Codable, Equatable, Sendable {
     }
 
     public func validate() throws {
+        guard !runtimeInstanceID.rawValue.isEmpty else {
+            throw PolicyValidationFailure.runtimeInstanceIDMissing
+        }
         try DesiredEnvironmentPolicy(
             environmentID: environmentID,
             version: version,
@@ -259,6 +329,7 @@ public struct DesiredNetworkPolicy: Codable, Equatable, Sendable {
 
     private enum CodingKeys: String, CodingKey {
         case environmentID = "environment_id"
+        case runtimeInstanceID = "runtime_instance_id"
         case version
         case networkBaseline = "network_baseline"
         case lease
@@ -281,6 +352,7 @@ public enum AppliedPolicyStatus: String, Codable, Equatable, Sendable {
 
 public struct AppliedNetworkPolicyEvidence: Codable, Equatable, Sendable {
     public let environmentID: EnvironmentID
+    public let runtimeInstanceID: RuntimeInstanceID
     public let version: PolicyVersion?
     public let status: AppliedPolicyStatus
     public let agentHealth: GuestAgentHealth
@@ -290,6 +362,7 @@ public struct AppliedNetworkPolicyEvidence: Codable, Equatable, Sendable {
 
     public init(
         environmentID: EnvironmentID,
+        runtimeInstanceID: RuntimeInstanceID,
         version: PolicyVersion?,
         status: AppliedPolicyStatus,
         agentHealth: GuestAgentHealth,
@@ -298,6 +371,7 @@ public struct AppliedNetworkPolicyEvidence: Codable, Equatable, Sendable {
         failureCode: String? = nil
     ) {
         self.environmentID = environmentID
+        self.runtimeInstanceID = runtimeInstanceID
         self.version = version
         self.status = status
         self.agentHealth = agentHealth
@@ -308,6 +382,7 @@ public struct AppliedNetworkPolicyEvidence: Codable, Equatable, Sendable {
 
     private enum CodingKeys: String, CodingKey {
         case environmentID = "environment_id"
+        case runtimeInstanceID = "runtime_instance_id"
         case version
         case status
         case agentHealth = "agent_health"
@@ -319,6 +394,7 @@ public struct AppliedNetworkPolicyEvidence: Codable, Equatable, Sendable {
 
 public struct AppliedSharePolicyEvidence: Codable, Equatable, Sendable {
     public let environmentID: EnvironmentID
+    public let runtimeInstanceID: RuntimeInstanceID
     public let version: PolicyVersion?
     public let status: AppliedPolicyStatus
     public let observedAtUnixMilliseconds: UInt64
@@ -326,12 +402,14 @@ public struct AppliedSharePolicyEvidence: Codable, Equatable, Sendable {
 
     public init(
         environmentID: EnvironmentID,
+        runtimeInstanceID: RuntimeInstanceID,
         version: PolicyVersion?,
         status: AppliedPolicyStatus,
         observedAtUnixMilliseconds: UInt64,
         failureCode: String? = nil
     ) {
         self.environmentID = environmentID
+        self.runtimeInstanceID = runtimeInstanceID
         self.version = version
         self.status = status
         self.observedAtUnixMilliseconds = observedAtUnixMilliseconds
@@ -340,6 +418,7 @@ public struct AppliedSharePolicyEvidence: Codable, Equatable, Sendable {
 
     private enum CodingKeys: String, CodingKey {
         case environmentID = "environment_id"
+        case runtimeInstanceID = "runtime_instance_id"
         case version
         case status
         case observedAtUnixMilliseconds = "observed_at_unix_milliseconds"

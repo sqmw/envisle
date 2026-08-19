@@ -35,7 +35,8 @@ public protocol ShareBroker: Sendable {
     ) async throws -> ShareChangeDisposition
 
     func observeAppliedPolicy(
-        for environmentID: EnvironmentID
+        for environmentID: EnvironmentID,
+        runtimeInstanceID: RuntimeInstanceID
     ) async throws -> AppliedSharePolicyEvidence
 }
 
@@ -52,15 +53,22 @@ public enum QuarantineReason: String, Codable, Equatable, Sendable {
 
 public struct NetworkPolicyApplicationReceipt: Codable, Equatable, Sendable {
     public let environmentID: EnvironmentID
+    public let runtimeInstanceID: RuntimeInstanceID
     public let acceptedVersion: PolicyVersion
 
-    public init(environmentID: EnvironmentID, acceptedVersion: PolicyVersion) {
+    public init(
+        environmentID: EnvironmentID,
+        runtimeInstanceID: RuntimeInstanceID,
+        acceptedVersion: PolicyVersion
+    ) {
         self.environmentID = environmentID
+        self.runtimeInstanceID = runtimeInstanceID
         self.acceptedVersion = acceptedVersion
     }
 
     private enum CodingKeys: String, CodingKey {
         case environmentID = "environment_id"
+        case runtimeInstanceID = "runtime_instance_id"
         case acceptedVersion = "accepted_version"
     }
 }
@@ -73,6 +81,15 @@ public enum GuestPolicyRequestValidationFailure: Error, Equatable, Sendable {
     case unsupportedProtocolVersion(UInt16)
     case requestIDMissing
     case environmentIDMissing
+    case runtimeInstanceIDMissing
+}
+
+public enum GuestPolicyResponseValidationFailure: Error, Equatable, Sendable {
+    case unsupportedProtocolVersion(UInt16)
+    case requestIDMismatch
+    case environmentIDMismatch
+    case runtimeInstanceIDMismatch
+    case policyVersionMismatch
 }
 
 public struct GuestPolicyApplyRequest: Codable, Equatable, Sendable {
@@ -111,21 +128,25 @@ public struct GuestPolicyObserveRequest: Codable, Equatable, Sendable {
     public let protocolVersion: UInt16
     public let requestID: String
     public let environmentID: EnvironmentID
+    public let runtimeInstanceID: RuntimeInstanceID
 
     public init(
         protocolVersion: UInt16 = GuestPolicyProtocol.currentVersion,
         requestID: String,
-        environmentID: EnvironmentID
+        environmentID: EnvironmentID,
+        runtimeInstanceID: RuntimeInstanceID
     ) {
         self.protocolVersion = protocolVersion
         self.requestID = requestID
         self.environmentID = environmentID
+        self.runtimeInstanceID = runtimeInstanceID
     }
 
     private enum CodingKeys: String, CodingKey {
         case protocolVersion = "protocol_version"
         case requestID = "request_id"
         case environmentID = "environment_id"
+        case runtimeInstanceID = "runtime_instance_id"
     }
 
     public func validate() throws {
@@ -137,6 +158,9 @@ public struct GuestPolicyObserveRequest: Codable, Equatable, Sendable {
         }
         guard !environmentID.rawValue.isEmpty else {
             throw GuestPolicyRequestValidationFailure.environmentIDMissing
+        }
+        guard !runtimeInstanceID.rawValue.isEmpty else {
+            throw GuestPolicyRequestValidationFailure.runtimeInstanceIDMissing
         }
     }
 }
@@ -161,6 +185,26 @@ public struct GuestPolicyApplyResponse: Codable, Equatable, Sendable {
         case requestID = "request_id"
         case receipt
     }
+
+    public func validate(matching request: GuestPolicyApplyRequest) throws {
+        try request.validate()
+        guard protocolVersion == GuestPolicyProtocol.currentVersion,
+              protocolVersion == request.protocolVersion else {
+            throw GuestPolicyResponseValidationFailure.unsupportedProtocolVersion(protocolVersion)
+        }
+        guard requestID == request.requestID else {
+            throw GuestPolicyResponseValidationFailure.requestIDMismatch
+        }
+        guard receipt.environmentID == request.desiredPolicy.environmentID else {
+            throw GuestPolicyResponseValidationFailure.environmentIDMismatch
+        }
+        guard receipt.runtimeInstanceID == request.desiredPolicy.runtimeInstanceID else {
+            throw GuestPolicyResponseValidationFailure.runtimeInstanceIDMismatch
+        }
+        guard receipt.acceptedVersion == request.desiredPolicy.version else {
+            throw GuestPolicyResponseValidationFailure.policyVersionMismatch
+        }
+    }
 }
 
 public struct GuestPolicyObserveResponse: Codable, Equatable, Sendable {
@@ -183,6 +227,23 @@ public struct GuestPolicyObserveResponse: Codable, Equatable, Sendable {
         case requestID = "request_id"
         case evidence
     }
+
+    public func validate(matching request: GuestPolicyObserveRequest) throws {
+        try request.validate()
+        guard protocolVersion == GuestPolicyProtocol.currentVersion,
+              protocolVersion == request.protocolVersion else {
+            throw GuestPolicyResponseValidationFailure.unsupportedProtocolVersion(protocolVersion)
+        }
+        guard requestID == request.requestID else {
+            throw GuestPolicyResponseValidationFailure.requestIDMismatch
+        }
+        guard evidence.environmentID == request.environmentID else {
+            throw GuestPolicyResponseValidationFailure.environmentIDMismatch
+        }
+        guard evidence.runtimeInstanceID == request.runtimeInstanceID else {
+            throw GuestPolicyResponseValidationFailure.runtimeInstanceIDMismatch
+        }
+    }
 }
 
 public enum QuarantineDisposition: String, Codable, Equatable, Sendable {
@@ -192,10 +253,12 @@ public enum QuarantineDisposition: String, Codable, Equatable, Sendable {
 
 public protocol NetworkBroker: Sendable {
     func apply(
-        _ desiredPolicy: DesiredEnvironmentPolicy
+        _ desiredPolicy: DesiredEnvironmentPolicy,
+        runtimeInstanceID: RuntimeInstanceID
     ) async throws -> NetworkPolicyApplicationReceipt
     func observeAppliedPolicy(
-        for environmentID: EnvironmentID
+        for environmentID: EnvironmentID,
+        runtimeInstanceID: RuntimeInstanceID
     ) async throws -> AppliedNetworkPolicyEvidence
     func quarantine(
         _ environmentID: EnvironmentID,

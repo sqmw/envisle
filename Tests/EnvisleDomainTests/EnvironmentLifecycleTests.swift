@@ -44,4 +44,14 @@ final class EnvironmentLifecycleTests: XCTestCase {
         try lifecycle.apply(.startRequested)
         XCTAssertEqual(lifecycle.state, .starting)
     }
+
+    func testStopFailureMustProveRuntimeStoppedBeforeDeletion() throws {
+        var lifecycle = EnvironmentLifecycle(state: .stopping)
+
+        try lifecycle.apply(.operationFailed)
+        XCTAssertThrowsError(try lifecycle.apply(.deletionRequested))
+        try lifecycle.apply(.reconciledStopped)
+        try lifecycle.apply(.deletionRequested)
+        XCTAssertEqual(lifecycle.state, .deleting)
+    }
 }

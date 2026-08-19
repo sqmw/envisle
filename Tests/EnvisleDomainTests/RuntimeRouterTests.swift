@@ -5,13 +5,8 @@ final class RuntimeRouterTests: XCTestCase {
     func testSelectsHighestPriorityExactCapableProvider() throws {
         let low = Fixtures.provider(id: "low", priority: 1)
         let high = Fixtures.provider(id: "high", priority: 10)
-        let requirement = RuntimeRequirement(
+        let decision = try RuntimeRouter.routeManagedEnvironment(
             placement: Fixtures.placement,
-            requiredCapabilities: Fixtures.requiredCapabilities
-        )
-
-        let decision = try RuntimeRouter.route(
-            requirement: requirement,
             providers: [low, high]
         )
 
@@ -21,13 +16,11 @@ final class RuntimeRouterTests: XCTestCase {
     func testMissingSecurityCapabilityProducesExplainableRejection() {
         let capabilities = Fixtures.requiredCapabilities.subtracting([.appliedNetworkPolicyQuery])
         let provider = Fixtures.provider(id: "incomplete", capabilities: capabilities)
-        let requirement = RuntimeRequirement(
-            placement: Fixtures.placement,
-            requiredCapabilities: Fixtures.requiredCapabilities
-        )
-
         XCTAssertThrowsError(
-            try RuntimeRouter.route(requirement: requirement, providers: [provider])
+            try RuntimeRouter.routeManagedEnvironment(
+                placement: Fixtures.placement,
+                providers: [provider]
+            )
         ) { error in
             let failure = error as? RuntimeRoutingFailure
             XCTAssertEqual(
@@ -50,18 +43,33 @@ final class RuntimeRouterTests: XCTestCase {
             guestArchitecture: .x86_64
         )
         let provider = Fixtures.provider(id: "x86", placement: x86Placement)
-        let requirement = RuntimeRequirement(
-            placement: Fixtures.placement,
-            requiredCapabilities: Fixtures.requiredCapabilities
-        )
-
         XCTAssertThrowsError(
-            try RuntimeRouter.route(requirement: requirement, providers: [provider])
+            try RuntimeRouter.routeManagedEnvironment(
+                placement: Fixtures.placement,
+                providers: [provider]
+            )
         ) { error in
             let failure = error as? RuntimeRoutingFailure
             XCTAssertEqual(
                 failure?.evaluations.first?.rejection,
                 .unsupportedPlacement(Fixtures.placement)
+            )
+        }
+    }
+
+    func testEmptyCapabilityProviderCannotBypassManagedSecurityProfile() {
+        let provider = Fixtures.provider(id: "empty", capabilities: [])
+
+        XCTAssertThrowsError(
+            try RuntimeRouter.routeManagedEnvironment(
+                placement: Fixtures.placement,
+                providers: [provider]
+            )
+        ) { error in
+            let failure = error as? RuntimeRoutingFailure
+            XCTAssertEqual(
+                failure?.evaluations.first?.rejection,
+                .missingCapabilities(ManagedRuntimeSecurityProfile.requiredCapabilities)
             )
         }
     }

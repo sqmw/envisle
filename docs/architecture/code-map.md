@@ -12,12 +12,12 @@
 | 架构基线 | Environment、Provider、产品路径 | `docs/architecture/` | 文档链接检查 | 已建立 |
 | 研究证据 | 讨论与外部一手资料 | `docs/research/` | 人工来源 review | 已建立 |
 | Swift Package | 包与工具链入口 | `Package.swift` | `swift test` | 已建立 |
-| 核心身份与放置 | Environment/Provider ID、host/guest/arch | `Sources/EnvisleDomain/CoreTypes.swift` | `RuntimeRouterTests`、`PolicyTests` | 已建立 |
+| 核心身份与放置 | Environment/Provider/RuntimeInstance ID、host/guest/arch | `Sources/EnvisleDomain/CoreTypes.swift` | `RuntimeRouterTests`、`PolicyTests` | 已建立 |
 | 生命周期 | 规范状态、事件与合法转换 | `Sources/EnvisleDomain/EnvironmentLifecycle.swift` | `EnvironmentLifecycleTests` | 已建立 |
-| 策略与证据 | 默认拒绝、授权、版本/摘要、租约、applied evidence | `Sources/EnvisleDomain/Policy.swift` | `PolicyTests`、`ReadinessTests` | 已建立 |
+| 策略与证据 | 默认拒绝、授权/撤销、版本/摘要、租约、applied evidence | `Sources/EnvisleDomain/Policy.swift` | `AuthorizationTests`、`PolicyTests`、`ReadinessTests` | 已建立 |
 | 安全就绪判定 | Runtime 与 desired/applied policy 对账 | `Sources/EnvisleDomain/Readiness.swift` | `ReadinessTests` | 已建立 |
 | Provider/Router | capability、精确路由、原始资源与错误 | `Sources/EnvisleDomain/RuntimeProvider.swift` | `RuntimeRouterTests` | 已建立 |
-| Broker/Agent 边界 | Storage、Share、Network、Guest Policy JSON 消息 | `Sources/EnvisleDomain/BrokerContracts.swift` | `PolicyTests` | 已建立 |
+| Broker/Agent 边界 | Storage、Share、Network、Guest Policy JSON 消息与响应关联 | `Sources/EnvisleDomain/BrokerContracts.swift` | `GuestPolicyProtocolTests`、`PolicyTests` | 已建立 |
 | 平台实现 | UI、macOS Control Plane、Apple Provider、guest agent | 待后续 Task | 待后续 Probe/实现测试 | 未建立 |
 
 ## 依赖方向
