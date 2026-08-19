@@ -11,14 +11,16 @@ Environment Application Service
        |
 Capability-aware Runtime Router
        |
-Provider adapters（长期扩展视图；MVP 仅 managed VM）
+Platform Provider adapters
   |          |          |
 Container    VM         Emulator / Device
 ```
 
+Android 是当前最高产品优先级；macOS 是首个 reference profile。图中的统一只覆盖身份、生命周期、授权和证据，Platform Profile 仍各自声明 Runtime、权限与安全能力。
+
 ## 最小数据表示
 
-`T-003 v3` 已在 `EnvisleDomain` 冻结首个 Swift 值类型与语言无关 Guest Policy JSON：
+`T-003 v3` 已为 macOS reference profile 冻结首个 Swift 值类型与语言无关 Guest Policy JSON；后续 Cross-platform Contract v2 必须保留其历史证据并把平台专用假设移入 adapter/profile：
 
 - Identity：Environment、Provider 与每次启动唯一的 RuntimeInstance ID；`id`、`name`、`provider_id`、`kind`
 - Placement：`host_os`、`host_arch`、`guest_os`、`guest_arch`
@@ -37,7 +39,7 @@ Container    VM         Emulator / Device
 
 ## 证据边界
 
-产品路径已冻结为 [`Managed Runtime Platform`](mvp-baseline.md)；[`T-002 实测`](../research/macos-runtime-probe.md)支持 Apple ARM64 Linux VM Provider 条件性 Go，但证明 VZNAT 不能单独提供 host-to-guest 默认拒绝。`T-003 v3` 已冻结单进程 Swift 宿主、纯领域 Package 与语言无关 Guest Policy v1；详见 [`Environment 契约`](environment-contracts.md)与 [`D-007`](../DECISIONS.md#d-007)。
+产品路径已由 [`D-008`](../DECISIONS.md#d-008) 校正为 Android-first 的跨平台 Managed Runtime Platform。[`T-002 实测`](../research/macos-runtime-probe.md)只支持 Apple ARM64 Linux reference Provider 条件性 Go，并证明 VZNAT 不能单独提供 host-to-guest 默认拒绝。`D-007` 的单进程 Swift 宿主和 Guest Policy v1 只约束该 macOS Profile；详见 [`Environment 契约`](environment-contracts.md)。
 
 ## 验证思路
 

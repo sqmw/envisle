@@ -16,8 +16,8 @@
 - `Environment / Provider / Runtime Router / capability` → [`architecture/overview.md`](architecture/overview.md)
 - `状态机 / desired-applied / Broker / guest policy / 租约 / ready` → [`architecture/environment-contracts.md`](architecture/environment-contracts.md)
 - `MVP / control plane / runtime platform / 产品路径` → [`architecture/product-options.md`](architecture/product-options.md)
-- `最终产品 / Package / AI 工具 / 权限声明 / 解冻门` → [`product/final-product-proposal.md`](product/final-product-proposal.md)
-- `隔离 / 威胁模型 / 数据共享 / 网络策略 / MVP 冻结基线` → [`architecture/mvp-baseline.md`](architecture/mvp-baseline.md)
+- `最终产品 / Android-first / Platform Profile / Public APK / OEM` → [`product/final-product-proposal.md`](product/final-product-proposal.md)
+- `macOS reference / 隔离 / 威胁模型 / 数据共享 / 网络策略` → [`architecture/mvp-baseline.md`](architecture/mvp-baseline.md)
 - `模块 / 源码 / 测试 / 入口` → [`architecture/code-map.md`](architecture/code-map.md)
 - `为什么 / 决策 / 名称冲突` → [`DECISIONS.md`](DECISIONS.md)
 

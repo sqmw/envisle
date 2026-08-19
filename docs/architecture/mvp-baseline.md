@@ -1,4 +1,6 @@
-# MVP 冻结基线：受管隔离环境
+# macOS Reference Profile 基线：受管隔离环境
+
+本文件只约束 Apple silicon + macOS 26 的 ARM64 Linux VM reference profile，不定义 Envisle 的跨平台产品范围。Android-first 全局方向见 [`D-008`](../DECISIONS.md#d-008) 与 [`最终产品方向`](../product/final-product-proposal.md)。
 
 ## 产品目标
 
@@ -70,7 +72,7 @@ Guest Agent
 - Runtime 初始化失败时不得静默切换到隔离更弱的后端。
 - `P-ENVI-001` 已实测 VZNAT 允许宿主直接连接 guest 服务，因此 NAT attachment 不是 host-to-guest 防火墙；默认拒绝、端口 allow/revoke 和实际策略证明必须由 Network Broker + guest policy agent 实施。Agent 未就绪、evidence 过期、策略身份不匹配或 evidence 不属于当前 RuntimeInstanceID 时不得 ready；策略租约超时后 guest 必须自行恢复默认拒绝，宿主不能确认隔离时必须停止 VM。
 
-## 首个 MVP 范围
+## macOS Reference 范围
 
 - Host：Apple silicon + macOS 26。
 - Guest：项目提供的 ARM64 Linux 最小镜像。
@@ -79,7 +81,7 @@ Guest Agent
 - 网络：NAT 出站；无默认入站；单端口显式发布。
 - 可观测：宿主能力、Provider、guest 架构、状态、共享、端口和原始失败原因可见。
 
-## MVP 排除项
+## macOS Reference 排除项
 
 - macOS、Windows、Android guest 的正式支持；
 - Container 作为顶层隔离边界；

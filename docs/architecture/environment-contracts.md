@@ -1,4 +1,6 @@
-# Environment 领域与 Provider 契约 v1
+# Environment 领域与 Provider 契约 v1（macOS Reference）
+
+本契约是 `T-003 v3` 关闭时形成的 macOS reference contract，不是 Android-first 全局契约。跨平台方向见 [`D-008`](../DECISIONS.md#d-008)；后续 Contract v2 必须保留本文历史证据，并把 Swift、VZNAT 与 Guest Agent 实施细节留在对应 Platform Profile。
 
 ## 问题建模
 

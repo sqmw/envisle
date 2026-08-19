@@ -2,7 +2,7 @@
 
 ## 项目目标
 
-Envisle 安装后创建并拥有独立 Environment，以受管 VM 为默认安全边界，并通过项目显式授权控制宿主共享与网络入口。Apple ARM64 Linux Runtime 已取得条件性 Go，Environment / Provider / Broker 契约基线已完成。
+Envisle 是跨平台权限化 Environment 系统：在 Android、macOS、Windows 等宿主上创建并拥有独立实例，由产品控制文件、网络、凭据、设备与应用能力如何跨越实例边界。Android 是当前最高战略优先级，macOS 是已取得 ARM64 Linux VM 条件性 Go 的参考实现平台。
 
 ## Milestones
 
@@ -36,15 +36,15 @@ Envisle 安装后创建并拥有独立 Environment，以受管 VM 为默认安�
 ### T-005 全局漂移审查与最终产品方案定稿
 
 - 标准任务名称：`全局漂移审查与最终产品方案定稿`
-- 任务定义版本：`v1`
+- 任务定义版本：`v2`
 - 状态：`in_progress`
 - 优先级：`P0`
 - 主归属 Milestone：`M-03`
 - 必要依赖：`T-001`、`T-002 v2`、`T-003 v3`、`T-004 v1`。
-- 是什么：全量核对项目规则、当前真相、任务与 Decision、领域源码/测试、Probe 和最新外部证据，识别事实/范围/术语/证据漂移；在冻结的 Managed Runtime Platform 与受控共享基线上，确定唯一的最终产品方案和 macOS 首发落地边界。
-- 边界：本 Task 可以修正无争议的事实与文档漂移并新增产品 Decision；不实现 UI、正式 Provider、Guest Policy Agent 或运行镜像，不修改 D-002 的默认 VM 隔离和产品受控共享冻结基线，除非用户另行明确解冻。
-- 做完算什么：漂移审查有可定位结论；目标用户、核心场景、非目标、宿主/guest、技术栈、模块/进程、数据/网络/共享、分发和阶段路线唯一；每项产品承诺均映射到已实测或待验证证据；独立 review 和 `make check` 通过，提交已推送。
-- 当前步骤：Step 2 — 比较候选并确定最终产品方案；推荐方案已形成，等待用户明确批准宿主网络权威对 `D-005` / `D-007` 的具体解冻；详见 [`docs/STEPS.md`](STEPS.md#steps-t-005-v1)。
+- 是什么：全量核对项目事实与外部证据，修复把 macOS 参考实现误写成产品边界的方向漂移；冻结 Envisle 的跨平台产品定义、Android 第一战略优先级和 macOS 参考实现角色，并为 Android 普通 APK 与 OEM/AOSP 两条交付路径建立可证伪的能力门。
+- 边界：本 Task 只更新产品、架构、决策和任务文档，不实现 UI、Provider、Guest Agent、Android APK 或镜像；不把普通 APK、AVF/pKVM、完整 Android guest 或 OEM 权限写成已取得能力。D-005/D-007 继续只约束当前 macOS reference profile，网络权威 v2 另立后续 Task。
+- 做完算什么：产品定义不再绑定 macOS；Android 宿主的两类目标与三条交付 profile 清晰；产品优先级、工程推进顺序、平台共性契约和平台 adapter 边界一致；每项能力均标记已验证、待 Probe 或需 OEM；独立 review、`make check`、提交和推送闭环。
+- 当前步骤：Step 3 — 独立 review、验证与关闭；本轮已完成主 Agent 自审与项目检查，尚待独立复核；详见 [`docs/STEPS.md`](STEPS.md#steps-t-005-v2)。
 
 ## 当前风险与阻塞
 
@@ -52,6 +52,7 @@ Envisle 安装后创建并拥有独立 Environment，以受管 VM 为默认安�
 - `Envisle` 已完成工程冲突初筛，但商标可用性仍需在域名、商店或付费品牌投入前正式复核；详见 `D-003`。
 - macOS / Windows / Android 的虚拟化、镜像分发和许可边界不同，不能把能力矩阵当作统一承诺。
 - 当前领域测试与独立工程 review 不是正式安全认证；真实 guest firewall/transport 进入产品前仍需冻结审核计划并做 Probe。
+- Android AVF/pVM 创建权限和启动镜像受平台签名/OEM 控制；普通第三方 APK 不能被描述为已能交付完整 Android Environment。
 - 当前计划外活跃 Task 占比：`0/1`。
 
 ## 已关闭索引

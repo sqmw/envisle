@@ -18,7 +18,7 @@
 | 安全就绪判定 | Runtime 与 desired/applied policy 对账 | `Sources/EnvisleDomain/Readiness.swift` | `ReadinessTests` | 已建立 |
 | Provider/Router | capability、精确路由、原始资源与错误 | `Sources/EnvisleDomain/RuntimeProvider.swift` | `RuntimeRouterTests` | 已建立 |
 | Broker/Agent 边界 | Storage、Share、Network、Guest Policy JSON 消息与响应关联 | `Sources/EnvisleDomain/BrokerContracts.swift` | `GuestPolicyProtocolTests`、`PolicyTests` | 已建立 |
-| 平台实现 | UI、macOS Control Plane、Apple Provider、guest agent | 待后续 Task | 待后续 Probe/实现测试 | 未建立 |
+| 平台实现 | Android App/Profile Provider、macOS Control Plane/Apple Provider、各平台 UI 与 guest agent | 待后续 Task | Android capability Probe、macOS 实现测试 | 未建立 |
 
 ## 依赖方向
 

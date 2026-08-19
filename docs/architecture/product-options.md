@@ -1,18 +1,18 @@
-# 首个 MVP 产品路径（已决策）
+# 产品路径决策与平台范围
 
 ## 核心缺口
 
-用户已明确首要目的：安装产品后由产品创建独立实例，外部应用默认不可干扰，数据共享由产品本身控制。因此本文件中的比较已经关闭，当前冻结结论见 [`mvp-baseline.md`](mvp-baseline.md)。
+用户已明确首要目的：安装产品后由产品创建独立实例，数据共享由产品本身控制；并进一步明确 Android 是当前最高产品优先级，macOS 只是参考实现平台。因此 Runtime Platform 与 Local Control Plane 的比较已经关闭；跨平台范围见 [`D-008`](../DECISIONS.md#d-008)，macOS Profile 见 [`mvp-baseline.md`](mvp-baseline.md)。
 
 ## Option A — Runtime Platform
 
 - 决策：**采用，并收敛为 Managed Runtime Platform。**
 
 - 解决：用户无需预装后端，Envisle 自己提供环境创建和运行。
-- 首发后端：Virtualization.framework 上的 ARM64 Linux 受管 VM；Apple `container`、QEMU 与 Windows Provider 仅保留为后续独立评估对象。
+- 已验证后端：macOS Virtualization.framework 上的 ARM64 Linux 受管 VM。当前最高优先级改为 Android Profile capability Probe；Apple `container`、QEMU 与 Windows Provider 保留为独立评估对象。
 - 优点：产品体验可控，长期形成真正统一的环境平台。
 - 成本：需要承担镜像、网络、磁盘、快照、guest integration、安全更新与许可策略。
-- 首个验收：Apple silicon + macOS 26 上一条 ARM64 Linux VM 路径完成创建、启停、删除、独立系统盘、默认无共享及错误回收；Container 不进入 MVP 验收。
+- 已完成参考验收：Apple silicon + macOS 26 的 ARM64 Linux VM 生命周期、独立系统盘、默认无共享与错误证据。下一个产品验收必须来自 Android capability matrix，不能由 macOS 结果替代。
 - 触发条件：愿意把首期重点放在底层 Runtime 工程，而不是先验证统一控制面需求。
 
 ## Option B — Local Control Plane
@@ -37,4 +37,4 @@
 - 可解释失败、日志和回退句柄；
 - 仓库外运行数据策略。
 
-共同基线继续有效；正式实现以 [`mvp-baseline.md`](mvp-baseline.md) 的 VM 默认隔离、项目介导共享和明确威胁模型为准。
+共同基线继续有效；全局产品以 [`最终产品方向`](../product/final-product-proposal.md) 为准。`mvp-baseline.md` 只约束 macOS reference profile，不把“一实例一 Apple VM”外推为所有平台的固定实现。

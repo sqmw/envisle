@@ -17,7 +17,7 @@
 | Windows | Hyper-V、WHP、WSL2 分别适合完整 VM、VMM 执行底座、Linux 开发环境 | 先做 capability probe；不可把 Windows Home/Pro、启用状态和重启要求隐藏 |
 | Windows container | Windows Containers 不支持 GUI/桌面型应用，镜像与宿主版本/许可有约束 | 不能代替完整 Windows Environment |
 | Android desktop | Android Emulator 可被 CLI 编排，但官方定位是应用开发/测试 | 商业嵌入与再分发前需专项许可；不进首个 MVP |
-| Android host | AVF/pKVM 的 pVM 权限限平台签名应用；Microdroid 无完整 Android UI/SystemServer | 普通 Play APK 路线禁用；仅 OEM/系统镜像合作时重开 |
+| Android host | AVF/pKVM 的 pVM 权限限平台签名应用；Microdroid 无完整 Android UI/SystemServer | Android 是最高产品优先级；立即区分 Public APK、Enterprise 与 OEM/AOSP Probe，完整愿景以 OEM/平台能力为主路线，不把普通 APK 写成已可用 |
 | QEMU | HVF/WHPX 同 ISA 加速；跨 ISA 依赖 TCG | 运行时必须报告实际 accelerator，禁止静默性能降级 |
 | 竞争扫描推断 | 初始化时提出“跨独立 VM + container provider 的 capability-aware 控制面”假设；已由 `D-002` 的 VM-first Managed Runtime MVP 取代 | 仅作历史假设，不再指导首验 |
 | 名称 | GitHub 已有 `OSDeck` 组织、Client/Host/Emulator 等软件仓库 | 已由 `D-003` 取代：标准名称和 repository slug 均为 `Envisle/envisle` |

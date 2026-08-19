@@ -7,12 +7,13 @@
 
 ## 项目事实
 
-1. 当前阶段：`T-003 v3` 已冻结首个 Environment/Provider/Broker 领域契约；`T-005 v1` 正在执行全局漂移审查与最终产品方案定稿。
-2. 当前技术状态：macOS host Control Plane、Broker 编排和 Apple Provider 已冻结为单一签名 Swift 进程内分层；UI 与 guest agent 实现语言尚未冻结，也没有正式 App、Provider 或 agent 实现。
-3. 当前首发目标宿主：Apple silicon + macOS 26，首个 guest 为 ARM64 Linux；`P-ENVI-001` 已在一台 Apple M2/macOS 26.5.1 上通过生命周期、独立磁盘和只读共享探针，但正式支持仍需产品实现、宿主网络权威与安全验证。
-4. 冻结基线：`docs/architecture/mvp-baseline.md` 与 `D-002`；任何改变默认 VM 隔离、默认关闭共享/入站网络或产品受管生命周期的方案都需用户明确解冻。
-5. 主 TODO：`docs/TODO.md`；主 STEPS：`docs/STEPS.md`；主 DECISIONS：`docs/DECISIONS.md`。
-6. 运行数据边界：VM 磁盘、镜像、缓存、日志、数据库、快照、凭据与下载包一律置于仓库和同步目录之外。
+1. 当前阶段：`T-005 v2` 正在把产品方向校正为 Android-first 的跨平台 Environment 系统；`T-003 v3` 仍是已关闭的首个 macOS reference contract 证据。
+2. 当前产品优先级：Android host 第一，macOS 是首个已取得 Runtime 证据的 reference platform，Windows 后续；禁止把实现顺序解释成产品范围。
+3. 当前技术状态：全局 UI/Core/Provider 语言未冻结。仅 macOS reference profile 的 host Control Plane、Broker 编排和 Apple Provider 由 `D-007` 冻结为 Swift 分层；尚无正式 App、Provider 或 agent。
+4. 当前平台证据：Apple M2/macOS 26.5.1 的 ARM64 Linux VM 已通过生命周期、独立磁盘和只读共享探针；Android AVF/pVM 仍受平台签名/OEM 权限约束，尚无 Envisle Android Runtime Probe。
+5. 冻结基线：`D-008` 定义跨平台产品范围和 Android 第一优先级；`docs/architecture/mvp-baseline.md`、`D-002`、`D-005`、`D-007` 只作为 macOS reference profile 基线。改变默认隔离或产品受控共享仍需用户明确决策。
+6. 主 TODO：`docs/TODO.md`；主 STEPS：`docs/STEPS.md`；主 DECISIONS：`docs/DECISIONS.md`。
+7. 运行数据边界：VM 磁盘、镜像、缓存、日志、数据库、快照、凭据与下载包一律置于仓库和同步目录之外。
 
 ## 首读顺序
 
@@ -29,7 +30,8 @@
 3. 不允许把硬件加速失败静默降级为 TCG；实际 accelerator 必须可观察。
 4. 平台 API、外部 CLI 和第三方集成都在独立 adapter 内；核心领域不直接依赖其命令格式或 SDK 类型。
 5. 产品路径已冻结为 Managed Runtime Platform；不得退化为只管理用户现有 Runtime 的 Local Control Plane，也不得在无用户显式解冻时弱化默认 VM 隔离与项目受控共享。
-6. VZNAT 不等于 host-to-guest 防火墙；Network Broker 必须通过 guest policy agent 证明 default deny、allow 与 revoke，未证明时 fail closed。
+6. 在当前 macOS reference profile 中，VZNAT 不等于 host-to-guest 防火墙；Network Broker 必须通过 guest policy agent 证明 default deny、allow 与 revoke，未证明时 fail closed。该实现不得外推为 Android 全局网络模型。
+7. Android、macOS、Windows 是宿主 Platform Profile；平台专用 API、权限、语言和安全证据不得提升为全局 Environment 语义。Android 普通 APK、Enterprise 与 OEM/AOSP Profile 必须分开声明能力。
 
 ## 常用命令
 

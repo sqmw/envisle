@@ -38,3 +38,7 @@ curl -fsSL --compressed \
 - QEMU 不能把跨 ISA guest 宣传为硬件加速主路径。
 - `OSDeck` 已存在软件组织/仓库命名冲突，只保留为工作代号。
 - Flutter/Rust/Swift 是候选组合；初始化不通过目录结构将其冻结。
+
+## 后续用户方向校正
+
+2026-08-19，用户明确校正：Android 是 Envisle 当前最高产品优先级；macOS 只是当前最方便实现且同样需要支持的平台，不能把最终产品定义收窄为 macOS。该一手决策由 [`D-008`](../DECISIONS.md#d-008) 承接；原讨论中“Android host 后置”只保留为历史建议，不再代表当前路线。

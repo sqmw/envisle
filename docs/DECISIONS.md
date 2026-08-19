@@ -1,6 +1,6 @@
 # Envisle 主 DECISIONS
 
-历史 Decision：[`D-001`](archive/decisions-superseded.md#d-001) 已由 `D-002`、`D-003`、`D-007` 完整取代；[`D-004`](archive/decisions-superseded.md#d-004) 与 [`D-006`](archive/decisions-superseded.md#d-006) 已由 `D-007` 取代。
+历史 Decision：[`D-001`](archive/decisions-superseded.md#d-001) 已由 `D-002`、`D-003`、`D-007`、`D-008` 完整取代；[`D-004`](archive/decisions-superseded.md#d-004) 与 [`D-006`](archive/decisions-superseded.md#d-006) 已由 `D-007` 取代。
 
 <a id="d-002"></a>
 ## D-002 — MVP 采用 VM 边界的 Managed Runtime Platform
@@ -14,6 +14,25 @@
   - Host container 作为默认安全边界：共享宿主内核且宿主/平台差异大，无法一致承载完整 OS Environment 的隔离语义。
   - 所有 guest 同时进入 MVP：许可、镜像、图形和设备面过宽，不能形成可证伪的首个安全闭环。
 - 受影响实体与由此产生的约束：`T-002` 优先验证 Apple silicon + macOS 26 上 ARM64 Linux VM；`T-003` 必须包含 Storage/Share/Network broker 与 capability-aware Provider 契约；macOS/Windows/Android guest 后置；容器只能作为 VM 内工作负载优化。
+- 状态：`accepted`
+- 当前适用范围：由 `D-008` 限定为 macOS ARM64 Linux reference profile；不再代表 Envisle 的全局平台优先级或所有宿主的固定 Runtime。
+- 相关提交：本条所在提交。
+
+<a id="d-008"></a>
+## D-008 — Envisle 采用 Android-first 的跨平台 Environment 产品定义
+
+- 日期：2026-08-19
+- 一句话结论：Envisle 的最终产品范围是 Android、macOS、Windows 等宿主上的跨平台权限化 Environment 系统；Android host 是当前最高产品优先级，macOS 只作为首个已取得 Runtime 证据的 reference platform，不能定义全局产品边界。
+- 背景与触发原因：T-005 v1 曾把最终定位收敛为“macOS 上的权限化本地软件运行平台”；用户明确指出当前最重要的是 Android，macOS 虽然方便且需要实现，但把产品仅定义为 macOS 是方向错误，并授权按最新讨论更新 docs。
+- 产生上下文：Project `Envisle`，Milestone `M-03`，Task `T-005 v2`，Step 2。
+- 被否决的选项及理由：
+  - macOS-only 产品定义：混淆工程可达性与产品优先级，直接丢失用户最重要的 Android 目标。
+  - 因 Android 第一就声称普通 APK 可调用 AVF/pKVM：官方权限和启动镜像受平台签名/OEM 信任链约束，证据不支持。
+  - 用 Microdroid/Linux workload 代替完整 Android Environment：两者在 SystemServer、应用安装、图形与设备语义上不是同一产品能力。
+  - 立即冻结全局 Flutter/Rust/Swift 栈：尚无 Android Runtime Probe，平台 adapter 和跨平台复用边界没有证据。
+- 冻结不变量：用户面对统一的 Environment、Instance、授权和实际状态；平台通过独立 Profile/Provider 映射，不能伪造相同 Runtime 或安全语义；Android 第一不允许被 macOS 实现排期覆盖；所有 Android 能力必须标注 Public APK、Enterprise 或 OEM/AOSP Profile 和证据状态。
+- 平台范围：`D-002`、`D-005`、`D-007` 继续有效但只约束 macOS ARM64 Linux reference profile；其 Swift、VZNAT、Guest Policy 与一实例一 Apple VM 结论不得外推为 Android/Windows 全局实现。
+- 后续门槛：先建立 Android Platform Capability Probe，分别核验普通 APK、Device Owner/Enterprise、平台签名/AOSP 与 OEM 路径；再分别验证 Android host 上的 Linux/Microdroid workload 和完整 Android App/System Environment。T-003 v3 保留为历史 v1 证据，跨平台契约另立 v2 Task。
 - 状态：`accepted`
 - 相关提交：本条所在提交。
 
