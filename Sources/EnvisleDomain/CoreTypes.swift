@@ -6,6 +6,15 @@ public struct EnvironmentID: RawRepresentable, Codable, Hashable, Sendable {
     public init(rawValue: String) {
         self.rawValue = rawValue
     }
+
+    public init(from decoder: any Decoder) throws {
+        rawValue = try decoder.singleValueContainer().decode(String.self)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
+    }
 }
 
 public struct ProviderID: RawRepresentable, Codable, Hashable, Sendable {
@@ -14,6 +23,15 @@ public struct ProviderID: RawRepresentable, Codable, Hashable, Sendable {
     public init(rawValue: String) {
         self.rawValue = rawValue
     }
+
+    public init(from decoder: any Decoder) throws {
+        rawValue = try decoder.singleValueContainer().decode(String.self)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
+    }
 }
 
 public struct AuthorizationID: RawRepresentable, Codable, Hashable, Sendable {
@@ -21,6 +39,15 @@ public struct AuthorizationID: RawRepresentable, Codable, Hashable, Sendable {
 
     public init(rawValue: String) {
         self.rawValue = rawValue
+    }
+
+    public init(from decoder: any Decoder) throws {
+        rawValue = try decoder.singleValueContainer().decode(String.self)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
     }
 }
 
@@ -66,6 +93,14 @@ public struct EnvironmentPlacement: Codable, Equatable, Hashable, Sendable {
         self.guestArchitecture = guestArchitecture
         self.runtimeKind = runtimeKind
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case hostOS = "host_os"
+        case hostArchitecture = "host_architecture"
+        case guestOS = "guest_os"
+        case guestArchitecture = "guest_architecture"
+        case runtimeKind = "runtime_kind"
+    }
 }
 
 public struct EnvironmentSpecification: Codable, Equatable, Sendable {
@@ -77,5 +112,11 @@ public struct EnvironmentSpecification: Codable, Equatable, Sendable {
         self.id = id
         self.name = name
         self.placement = placement
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case placement
     }
 }

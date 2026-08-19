@@ -16,6 +16,7 @@ required_files=(
   docs/agent-context/current.md
   docs/architecture/overview.md
   docs/architecture/code-map.md
+  docs/architecture/environment-contracts.md
   docs/architecture/mvp-baseline.md
   docs/architecture/product-options.md
   docs/research/discussion-source.md

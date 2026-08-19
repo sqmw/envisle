@@ -11,6 +11,12 @@ public enum EnvironmentNotReadyReason: Equatable, Sendable {
     case policyEvidenceStale
     case policyLeaseInvalid
     case policyLeaseExpired
+    case shareEvidenceMissing
+    case sharePolicyEnvironmentMismatch
+    case sharePolicyNotEnforced(AppliedPolicyStatus)
+    case sharePolicySchemaMismatch(desired: UInt16, applied: UInt16)
+    case sharePolicyRevisionMismatch(desired: UInt64, applied: UInt64)
+    case sharePolicyDigestMismatch
 }
 
 public enum EnvironmentReadiness: Equatable, Sendable {
@@ -22,13 +28,14 @@ public enum EnvironmentReadinessEvaluator {
     public static func evaluate(
         lifecycle: EnvironmentLifecycleState,
         desiredPolicy: DesiredEnvironmentPolicy,
-        appliedPolicy: AppliedPolicyEvidence?,
+        appliedNetworkPolicy: AppliedNetworkPolicyEvidence?,
+        appliedSharePolicy: AppliedSharePolicyEvidence?,
         nowUnixMilliseconds: UInt64
     ) -> EnvironmentReadiness {
         guard lifecycle == .running else {
             return .notReady(.runtimeNotRunning(lifecycle))
         }
-        guard let appliedPolicy else {
+        guard let appliedPolicy = appliedNetworkPolicy else {
             return .notReady(.policyEvidenceMissing)
         }
         guard appliedPolicy.agentHealth == .healthy else {
@@ -75,6 +82,38 @@ public enum EnvironmentReadinessEvaluator {
         }
         guard remaining > evidenceAge else {
             return .notReady(.policyLeaseExpired)
+        }
+
+        guard let appliedSharePolicy else {
+            return .notReady(.shareEvidenceMissing)
+        }
+        guard appliedSharePolicy.environmentID == desiredPolicy.environmentID else {
+            return .notReady(.sharePolicyEnvironmentMismatch)
+        }
+        guard appliedSharePolicy.status == .enforced else {
+            return .notReady(.sharePolicyNotEnforced(appliedSharePolicy.status))
+        }
+        guard let shareVersion = appliedSharePolicy.version else {
+            return .notReady(.shareEvidenceMissing)
+        }
+        guard desiredPolicy.version.schema == shareVersion.schema else {
+            return .notReady(
+                .sharePolicySchemaMismatch(
+                    desired: desiredPolicy.version.schema,
+                    applied: shareVersion.schema
+                )
+            )
+        }
+        guard desiredPolicy.version.revision == shareVersion.revision else {
+            return .notReady(
+                .sharePolicyRevisionMismatch(
+                    desired: desiredPolicy.version.revision,
+                    applied: shareVersion.revision
+                )
+            )
+        }
+        guard desiredPolicy.version.digest == shareVersion.digest else {
+            return .notReady(.sharePolicyDigestMismatch)
         }
         return .ready
     }

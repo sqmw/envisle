@@ -33,6 +33,13 @@ public struct ShareAuthorization: Codable, Equatable, Sendable {
         self.guestMountName = guestMountName
         self.access = access
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case hostResourceID = "host_resource_id"
+        case guestMountName = "guest_mount_name"
+        case access
+    }
 }
 
 public enum TransportProtocol: String, Codable, Equatable, Sendable {
@@ -49,6 +56,12 @@ public struct InboundPortAuthorization: Codable, Equatable, Sendable {
         self.id = id
         self.transport = transport
         self.guestPort = guestPort
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case transport
+        case guestPort = "guest_port"
     }
 }
 
@@ -71,6 +84,11 @@ public struct NetworkBaseline: Codable, Equatable, Sendable {
         self.hostInbound = hostInbound
         self.guestPeers = guestPeers
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case hostInbound = "host_inbound"
+        case guestPeers = "guest_peers"
+    }
 }
 
 public struct PolicyLease: Codable, Equatable, Sendable {
@@ -83,6 +101,11 @@ public struct PolicyLease: Codable, Equatable, Sendable {
     ) {
         self.renewalIntervalMilliseconds = renewalIntervalMilliseconds
         self.failClosedAfterMilliseconds = failClosedAfterMilliseconds
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case renewalIntervalMilliseconds = "renewal_interval_milliseconds"
+        case failClosedAfterMilliseconds = "fail_closed_after_milliseconds"
     }
 }
 
@@ -122,6 +145,15 @@ public struct DesiredEnvironmentPolicy: Codable, Equatable, Sendable {
         self.lease = lease
         self.shares = shares
         self.inboundPorts = inboundPorts
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case environmentID = "environment_id"
+        case version
+        case networkBaseline = "network_baseline"
+        case lease
+        case shares
+        case inboundPorts = "inbound_ports"
     }
 
     public func validate() throws {
@@ -166,6 +198,16 @@ public struct DesiredEnvironmentPolicy: Codable, Equatable, Sendable {
         }
     }
 
+    public var networkProjection: DesiredNetworkPolicy {
+        DesiredNetworkPolicy(
+            environmentID: environmentID,
+            version: version,
+            networkBaseline: networkBaseline,
+            lease: lease,
+            inboundPorts: inboundPorts
+        )
+    }
+
     private func validateAuthorizationID(
         _ id: AuthorizationID,
         existing: inout Set<AuthorizationID>
@@ -184,6 +226,46 @@ private struct PortKey: Hashable {
     let guestPort: UInt16
 }
 
+public struct DesiredNetworkPolicy: Codable, Equatable, Sendable {
+    public let environmentID: EnvironmentID
+    public let version: PolicyVersion
+    public let networkBaseline: NetworkBaseline
+    public let lease: PolicyLease
+    public let inboundPorts: [InboundPortAuthorization]
+
+    public init(
+        environmentID: EnvironmentID,
+        version: PolicyVersion,
+        networkBaseline: NetworkBaseline,
+        lease: PolicyLease,
+        inboundPorts: [InboundPortAuthorization]
+    ) {
+        self.environmentID = environmentID
+        self.version = version
+        self.networkBaseline = networkBaseline
+        self.lease = lease
+        self.inboundPorts = inboundPorts
+    }
+
+    public func validate() throws {
+        try DesiredEnvironmentPolicy(
+            environmentID: environmentID,
+            version: version,
+            networkBaseline: networkBaseline,
+            lease: lease,
+            inboundPorts: inboundPorts
+        ).validate()
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case environmentID = "environment_id"
+        case version
+        case networkBaseline = "network_baseline"
+        case lease
+        case inboundPorts = "inbound_ports"
+    }
+}
+
 public enum GuestAgentHealth: String, Codable, Equatable, Sendable {
     case healthy
     case unreachable
@@ -197,7 +279,7 @@ public enum AppliedPolicyStatus: String, Codable, Equatable, Sendable {
     case unknown
 }
 
-public struct AppliedPolicyEvidence: Codable, Equatable, Sendable {
+public struct AppliedNetworkPolicyEvidence: Codable, Equatable, Sendable {
     public let environmentID: EnvironmentID
     public let version: PolicyVersion?
     public let status: AppliedPolicyStatus
@@ -222,5 +304,45 @@ public struct AppliedPolicyEvidence: Codable, Equatable, Sendable {
         self.observedAtUnixMilliseconds = observedAtUnixMilliseconds
         self.leaseRemainingMilliseconds = leaseRemainingMilliseconds
         self.failureCode = failureCode
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case environmentID = "environment_id"
+        case version
+        case status
+        case agentHealth = "agent_health"
+        case observedAtUnixMilliseconds = "observed_at_unix_milliseconds"
+        case leaseRemainingMilliseconds = "lease_remaining_milliseconds"
+        case failureCode = "failure_code"
+    }
+}
+
+public struct AppliedSharePolicyEvidence: Codable, Equatable, Sendable {
+    public let environmentID: EnvironmentID
+    public let version: PolicyVersion?
+    public let status: AppliedPolicyStatus
+    public let observedAtUnixMilliseconds: UInt64
+    public let failureCode: String?
+
+    public init(
+        environmentID: EnvironmentID,
+        version: PolicyVersion?,
+        status: AppliedPolicyStatus,
+        observedAtUnixMilliseconds: UInt64,
+        failureCode: String? = nil
+    ) {
+        self.environmentID = environmentID
+        self.version = version
+        self.status = status
+        self.observedAtUnixMilliseconds = observedAtUnixMilliseconds
+        self.failureCode = failureCode
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case environmentID = "environment_id"
+        case version
+        case status
+        case observedAtUnixMilliseconds = "observed_at_unix_milliseconds"
+        case failureCode = "failure_code"
     }
 }

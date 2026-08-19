@@ -37,7 +37,7 @@ Envisle 安装后创建并拥有独立 Environment，以受管 VM 为默认安�
 - 是什么：定义统一 Environment 生命周期、能力声明、Runtime Router 输入输出，以及 Storage/Share/Network broker、guest policy agent 与 Provider 边界。
 - 边界：只定义首个 ARM64 Linux 受管 VM 闭环所需的最小领域契约和架构测试，不预先承诺全部 host/guest 组合或认证加密存储。
 - 做完算什么：领域术语唯一；默认无共享、guest-to-guest 不可达、host-to-guest 默认拒绝均可表达并验证；共享和端口必须经 broker 授权且可撤销；guest firewall 实际策略状态可查询；能力不可用可解释；Provider 可替换，契约测试覆盖核心状态转换。
-- 当前步骤：Step 3 — 建立架构测试与文档导航；详见 [`docs/STEPS.md`](STEPS.md#steps-t-003-v3)。
+- 当前步骤：Step 4 — Review、验证并关闭 T-003 / M-02；详见 [`docs/STEPS.md`](STEPS.md#steps-t-003-v3)。
 
 ## 当前风险与阻塞
 

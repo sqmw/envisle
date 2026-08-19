@@ -7,7 +7,8 @@ public enum RuntimeCapability: String, Codable, CaseIterable, Hashable, Sendable
     case independentSystemDisk = "independent_system_disk"
     case readOnlyShareAtBoot = "read_only_share_at_boot"
     case guestPolicyAgent = "guest_policy_agent"
-    case appliedPolicyQuery = "applied_policy_query"
+    case appliedNetworkPolicyQuery = "applied_network_policy_query"
+    case appliedSharePolicyQuery = "applied_share_policy_query"
     case quarantine
 }
 

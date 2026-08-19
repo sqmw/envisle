@@ -65,7 +65,7 @@
 ## D-007 — macOS MVP 采用单进程 Swift 宿主与语言无关 Guest Policy 协议
 
 - 日期：2026-08-19
-- 一句话结论：macOS MVP 的 Control Plane、Broker 编排和 Apple Runtime Provider 位于同一签名用户进程，以 Swift 分层实现；纯领域模块不依赖 Apple API，guest policy agent 是 VM 内独立进程并通过版本化、语言无关契约交换 desired/applied policy，agent 实现语言暂不冻结。
+- 一句话结论：macOS MVP 的 Control Plane、Broker 编排和 Apple Runtime Provider 位于同一签名用户进程，以 Swift 分层实现；纯领域模块不依赖 Apple API，guest policy agent 是 VM 内独立进程并通过版本化、语言无关契约交换 desired network policy 与 applied network evidence，宿主 Share Broker 单独证明共享状态，agent 实现语言暂不冻结。
 - 背景与触发原因：T-002 已实测 Swift 与 Virtualization.framework、entitlement 和 VM 生命周期可行，同时证明 VZNAT 不能单独兑现宿主到 guest 的默认拒绝；T-003 需要在最少分布式状态和最小打包面下，把生命周期与安全策略的实际状态统一对账。
 - 产生上下文：Project `Envisle`，Milestone `M-02`，Task `T-003 v3`，Step 1；用户授权由 Agent 综合选择最佳 MVP 方案并明确要求按建议推进。
 - 收益：原生框架调用、签名、entitlement 和错误保真不经过 FFI/IPC；Environment、Broker 与 Provider 在一个事务边界内协调；纯领域模块和版本化 guest 协议仍可独立测试并为未来 Provider 复用。

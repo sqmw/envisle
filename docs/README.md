@@ -14,6 +14,7 @@
 - `macOS Runtime Probe / VM 启动 / VZNAT / virtiofs / conditional Go` → [`research/macos-runtime-probe.md`](research/macos-runtime-probe.md)
 - `名称 / Envisle / OSDeck / osdesk / rename` → [`research/name-selection.md`](research/name-selection.md)
 - `Environment / Provider / Runtime Router / capability` → [`architecture/overview.md`](architecture/overview.md)
+- `状态机 / desired-applied / Broker / guest policy / 租约 / ready` → [`architecture/environment-contracts.md`](architecture/environment-contracts.md)
 - `MVP / control plane / runtime platform / 产品路径` → [`architecture/product-options.md`](architecture/product-options.md)
 - `隔离 / 威胁模型 / 数据共享 / 网络策略 / MVP 冻结基线` → [`architecture/mvp-baseline.md`](architecture/mvp-baseline.md)
 - `模块 / 源码 / 测试 / 入口` → [`architecture/code-map.md`](architecture/code-map.md)

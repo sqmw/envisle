@@ -1,4 +1,9 @@
-.PHONY: check
+.PHONY: check project-check test
 
-check:
+check: test project-check
+
+test:
+	@swift test -Xswiftc -warnings-as-errors
+
+project-check:
 	@./scripts/check-project.sh

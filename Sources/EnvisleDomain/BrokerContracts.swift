@@ -33,6 +33,10 @@ public protocol ShareBroker: Sendable {
         authorizationID: AuthorizationID,
         from environmentID: EnvironmentID
     ) async throws -> ShareChangeDisposition
+
+    func observeAppliedPolicy(
+        for environmentID: EnvironmentID
+    ) async throws -> AppliedSharePolicyEvidence
 }
 
 public enum ShareChangeDisposition: String, Codable, Equatable, Sendable {
@@ -46,13 +50,138 @@ public enum QuarantineReason: String, Codable, Equatable, Sendable {
     case policyEvidenceMismatch = "policy_evidence_mismatch"
 }
 
-public struct PolicyApplicationReceipt: Codable, Equatable, Sendable {
+public struct NetworkPolicyApplicationReceipt: Codable, Equatable, Sendable {
     public let environmentID: EnvironmentID
     public let acceptedVersion: PolicyVersion
 
     public init(environmentID: EnvironmentID, acceptedVersion: PolicyVersion) {
         self.environmentID = environmentID
         self.acceptedVersion = acceptedVersion
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case environmentID = "environment_id"
+        case acceptedVersion = "accepted_version"
+    }
+}
+
+public enum GuestPolicyProtocol {
+    public static let currentVersion: UInt16 = 1
+}
+
+public enum GuestPolicyRequestValidationFailure: Error, Equatable, Sendable {
+    case unsupportedProtocolVersion(UInt16)
+    case requestIDMissing
+    case environmentIDMissing
+}
+
+public struct GuestPolicyApplyRequest: Codable, Equatable, Sendable {
+    public let protocolVersion: UInt16
+    public let requestID: String
+    public let desiredPolicy: DesiredNetworkPolicy
+
+    public init(
+        protocolVersion: UInt16 = GuestPolicyProtocol.currentVersion,
+        requestID: String,
+        desiredPolicy: DesiredNetworkPolicy
+    ) {
+        self.protocolVersion = protocolVersion
+        self.requestID = requestID
+        self.desiredPolicy = desiredPolicy
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case protocolVersion = "protocol_version"
+        case requestID = "request_id"
+        case desiredPolicy = "desired_policy"
+    }
+
+    public func validate() throws {
+        guard protocolVersion == GuestPolicyProtocol.currentVersion else {
+            throw GuestPolicyRequestValidationFailure.unsupportedProtocolVersion(protocolVersion)
+        }
+        guard !requestID.isEmpty else {
+            throw GuestPolicyRequestValidationFailure.requestIDMissing
+        }
+        try desiredPolicy.validate()
+    }
+}
+
+public struct GuestPolicyObserveRequest: Codable, Equatable, Sendable {
+    public let protocolVersion: UInt16
+    public let requestID: String
+    public let environmentID: EnvironmentID
+
+    public init(
+        protocolVersion: UInt16 = GuestPolicyProtocol.currentVersion,
+        requestID: String,
+        environmentID: EnvironmentID
+    ) {
+        self.protocolVersion = protocolVersion
+        self.requestID = requestID
+        self.environmentID = environmentID
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case protocolVersion = "protocol_version"
+        case requestID = "request_id"
+        case environmentID = "environment_id"
+    }
+
+    public func validate() throws {
+        guard protocolVersion == GuestPolicyProtocol.currentVersion else {
+            throw GuestPolicyRequestValidationFailure.unsupportedProtocolVersion(protocolVersion)
+        }
+        guard !requestID.isEmpty else {
+            throw GuestPolicyRequestValidationFailure.requestIDMissing
+        }
+        guard !environmentID.rawValue.isEmpty else {
+            throw GuestPolicyRequestValidationFailure.environmentIDMissing
+        }
+    }
+}
+
+public struct GuestPolicyApplyResponse: Codable, Equatable, Sendable {
+    public let protocolVersion: UInt16
+    public let requestID: String
+    public let receipt: NetworkPolicyApplicationReceipt
+
+    public init(
+        protocolVersion: UInt16 = GuestPolicyProtocol.currentVersion,
+        requestID: String,
+        receipt: NetworkPolicyApplicationReceipt
+    ) {
+        self.protocolVersion = protocolVersion
+        self.requestID = requestID
+        self.receipt = receipt
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case protocolVersion = "protocol_version"
+        case requestID = "request_id"
+        case receipt
+    }
+}
+
+public struct GuestPolicyObserveResponse: Codable, Equatable, Sendable {
+    public let protocolVersion: UInt16
+    public let requestID: String
+    public let evidence: AppliedNetworkPolicyEvidence
+
+    public init(
+        protocolVersion: UInt16 = GuestPolicyProtocol.currentVersion,
+        requestID: String,
+        evidence: AppliedNetworkPolicyEvidence
+    ) {
+        self.protocolVersion = protocolVersion
+        self.requestID = requestID
+        self.evidence = evidence
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case protocolVersion = "protocol_version"
+        case requestID = "request_id"
+        case evidence
     }
 }
 
@@ -62,8 +191,12 @@ public enum QuarantineDisposition: String, Codable, Equatable, Sendable {
 }
 
 public protocol NetworkBroker: Sendable {
-    func apply(_ desiredPolicy: DesiredEnvironmentPolicy) async throws -> PolicyApplicationReceipt
-    func observeAppliedPolicy(for environmentID: EnvironmentID) async throws -> AppliedPolicyEvidence
+    func apply(
+        _ desiredPolicy: DesiredEnvironmentPolicy
+    ) async throws -> NetworkPolicyApplicationReceipt
+    func observeAppliedPolicy(
+        for environmentID: EnvironmentID
+    ) async throws -> AppliedNetworkPolicyEvidence
     func quarantine(
         _ environmentID: EnvironmentID,
         reason: QuarantineReason
@@ -71,6 +204,6 @@ public protocol NetworkBroker: Sendable {
 }
 
 public protocol GuestPolicyTransport: Sendable {
-    func apply(_ desiredPolicy: DesiredEnvironmentPolicy) async throws -> PolicyApplicationReceipt
-    func observe(for environmentID: EnvironmentID) async throws -> AppliedPolicyEvidence
+    func apply(_ request: GuestPolicyApplyRequest) async throws -> GuestPolicyApplyResponse
+    func observe(_ request: GuestPolicyObserveRequest) async throws -> GuestPolicyObserveResponse
 }

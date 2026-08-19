@@ -12,5 +12,6 @@ let package = Package(
     ],
     targets: [
         .target(name: "EnvisleDomain"),
+        .testTarget(name: "EnvisleDomainTests", dependencies: ["EnvisleDomain"]),
     ]
 )

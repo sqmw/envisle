@@ -44,7 +44,7 @@ Guest Agent
 - 默认安全边界：每个 Environment 一台项目受管 VM。
 - Container：只作为 VM 内部的工作负载与分发优化，不替代 VM 隔离边界。
 - Provider：MVP 使用 Apple Virtualization.framework；跨平台 Provider 后续按相同上层契约接入。
-- Guest Agent：只暴露版本化的最小控制协议，用于就绪、优雅关机和受控共享；MVP 不提供任意宿主命令注入。
+- Guest Agent：只暴露版本化的最小策略协议，实施默认拒绝、显式端口授权、策略查询和失联租约；优雅关机等能力须使用独立最小协议，MVP 不提供任意宿主命令注入。
 
 ## 默认策略
 
@@ -68,7 +68,7 @@ Guest Agent
 - Environment 之间默认互相不可达。
 - 端口发布和环境间网络必须由产品显式创建，并在界面中持续可见。
 - Runtime 初始化失败时不得静默切换到隔离更弱的后端。
-- `P-ENVI-001` 已实测 VZNAT 允许宿主直接连接 guest 服务，因此 NAT attachment 不是 host-to-guest 防火墙；默认拒绝、端口 allow/revoke 和实际策略证明必须由 Network Broker + guest policy agent 实施，agent 未就绪时 fail closed。
+- `P-ENVI-001` 已实测 VZNAT 允许宿主直接连接 guest 服务，因此 NAT attachment 不是 host-to-guest 防火墙；默认拒绝、端口 allow/revoke 和实际策略证明必须由 Network Broker + guest policy agent 实施。Agent 未就绪、evidence 过期或策略身份不匹配时不得 ready；策略租约超时后 guest 必须自行恢复默认拒绝，宿主不能确认隔离时必须停止 VM。
 
 ## 首个 MVP 范围
 

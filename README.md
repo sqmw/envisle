@@ -4,7 +4,7 @@
 
 Envisle 安装后直接创建并拥有独立 `Environment`。每个实例默认以受管 VM 作为隔离边界；环境之间、宿主与环境之间默认不共享数据，只能通过 Envisle 创建、展示、撤销并审计的授权桥梁交换数据。
 
-项目当前处于 **Environment / Provider / Broker 契约准备阶段**。公开名称与首个产品模型已经冻结，macOS ARM64 Linux VM Probe 已形成条件性 Go；实现语言和语言级接口尚未冻结。
+项目当前处于 **Environment / Provider / Broker 契约基线阶段**。公开名称与首个产品模型已经冻结，macOS ARM64 Linux VM Probe 已形成条件性 Go；首个纯领域 Swift Package、Provider/Broker 协议和 Guest Policy v1 已建立，尚未实现正式 VM Provider、UI 或 guest agent。
 
 ## 当前共识
 
@@ -16,6 +16,7 @@ Envisle 安装后直接创建并拥有独立 `Environment`。每个实例默认�
 - 不把容器、完整 VM 和设备模拟器伪装成完全相同的资源。
 - 首个验证宿主为 Apple silicon + macOS 26，首个 guest 为项目提供的 ARM64 Linux 最小镜像；Apple M2/macOS 26.5.1 上的生命周期、独立磁盘和只读共享已实测通过。
 - VZNAT 不能单独提供宿主入站默认拒绝；端口策略必须由 Envisle 的 Network Broker 与 guest policy agent 执行并证明。
+- VM `running` 不等于 Environment `ready`；只有 guest agent 的 Network evidence 与宿主 Share Broker evidence 均匹配 desired policy，且网络租约有效时才 ready。
 - Android AVF/pKVM 不是普通第三方 APK 可依赖的产品后端。
 - 跨 ISA QEMU/TCG 只可作为兼容路径，不能承诺主路径交互性能。
 
@@ -36,13 +37,15 @@ Envisle 安装后直接创建并拥有独立 `Environment`。每个实例默认�
 
 ## 使用与验证
 
-当前没有可运行的产品代码。初始化检查入口：
+当前只有领域库和自动化测试，没有可运行的产品 App。要求 Apple silicon + macOS 26；Package 使用 Swift tools 6.2，已在 Xcode 26.5 / Swift 6.3.2 实测。统一验证入口：
 
 ```bash
 make check
 ```
 
-做对时命令退出码为 `0`，并确认必需入口、内部 Markdown 链接和同步目录安全约束存在；典型失败是入口缺失、相对链接失效或把运行数据目录放入仓库。
+做对时命令退出码为 `0`，16 个领域/架构测试全部通过，并确认必需入口、内部 Markdown 链接和同步目录安全约束存在；典型失败是状态机非法跳转被接受、旧策略 evidence 被判 ready、Router 静默跨架构 fallback、相对链接失效或把运行数据目录放入仓库。
+
+领域与协议的完整验收边界见 [`docs/architecture/environment-contracts.md`](docs/architecture/environment-contracts.md)。
 
 ## 本机与运行数据边界
 
